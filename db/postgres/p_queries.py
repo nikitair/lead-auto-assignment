@@ -34,7 +34,7 @@ def create_table_additional_cities(connector):
 
 
 @postgres_connector
-def get_additional_cities(connector):
+def get_all_additional_cities(connector):
     curr = connector.cursor()
     curr.execute(
         "SELECT * FROM statistics.market_leader_add_cities"
@@ -102,7 +102,7 @@ def create_table_excluded_cities(connector):
 
 
 @postgres_connector
-def get_excluded_cities(connector):
+def get_all_excluded_cities(connector):
     curr = connector.cursor()
     curr.execute(
         "SELECT * FROM statistics.market_leader_excl_cities"
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     add_additional_city(
         insert_payload=("Fergus", "Ontario", "nikita.stoliarov+1@actse.ltd")
     )
-    get_additional_cities()
+    get_all_additional_cities()
     # add_excluded_city(insert_payload=(
     #     "Hanover", "Ontario", "nikita.stoliarov+1@actse.ltd"))
-    # get_excluded_cities()
+    # get_all_excluded_cities()

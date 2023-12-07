@@ -32,7 +32,7 @@ def postgres_connector(func):
 
 
 @postgres_connector
-def demo_query(connector):
+def postgres_demo_query(connector):
     curr = connector.cursor()
     curr.execute("SELECT * FROM demo")
     data = curr.fetchall()
@@ -42,4 +42,4 @@ def demo_query(connector):
 
 
 if __name__ == "__main__":
-    demo_query()
+    postgres_demo_query()
