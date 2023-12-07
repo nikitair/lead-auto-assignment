@@ -26,7 +26,7 @@ def create_table_tbl_customers(connector):
 def get_all_customers(connector):
     curr = connector.cursor()
     curr.execute(
-        "SELECT * FROM main.tbl_customers LIMIT 5"
+        "SELECT * FROM main.tbl_customers"
     )
     logging.info("SELECTING DATA FROM tbl_customers")
     data = curr.fetchall()
@@ -74,7 +74,7 @@ def create_table_tbl_zipcodes(connector):
 def get_all_zipcodes(connector):
     curr = connector.cursor()
     curr.execute(
-        "SELECT * FROM main.tbl_zipcodes LIMIT 5"
+        "SELECT * FROM main.tbl_zipcodes"
     )
     logging.info("SELECTING DATA FROM tbl_zipcodes")
     data = curr.fetchall()
@@ -101,6 +101,96 @@ def add_zipcode(connector, insert_payload: tuple):
     curr.close()
 
 
+@mysql_connector
+def create_table_tbl_market_leader_postal_codes(connector):
+    curr = connector.cursor()
+    curr.execute(
+        """
+        CREATE TABLE IF NOT EXISTS main.tbl_market_leader_postal_codes (
+            customer_id INT PRIMARY KEY UNIQUE NOT NULL,
+            postal_code_id INT NOT NULL
+        );
+        """
+    )
+    logging.info("TABLE tbl_market_leader_postal_codes CREATED")
+    curr.close()
+
+
+@mysql_connector
+def get_all_market_leader_postal_codes(connector):
+    curr = connector.cursor()
+    curr.execute(
+        "SELECT * FROM main.tbl_market_leader_postal_codes LIMIT 10"
+    )
+    logging.info("SELECTING DATA FROM tbl_market_leader_postal_codes")
+    data = curr.fetchall()
+    logging.info(data)
+    curr.close()
+    return data
+
+
+@mysql_connector
+def add_market_leader_postal_code(connector, insert_payload: tuple):
+    curr = connector.cursor()
+    curr.executemany(
+        """INSERT INTO main.tbl_market_leader_postal_codes
+                (customer_id, postal_code_id)
+            VALUES
+                ( %s, %s)
+            ON DUPLICATE KEY
+                UPDATE customer_id = VALUES(customer_id);
+    """,
+        insert_payload
+    )
+    connector.commit()
+    logging.info(f"INSERTED TO market_leader_postal_codes {insert_payload[0]}")
+    curr.close()
+
+
+@mysql_connector
+def get_realtors_in_polygon(connector, province, postalcode):
+    curr = connector.cursor()
+    curr.execute(
+        """
+        SELECT DISTINCT
+            main.tbl_zipcodes.City AS "City",
+            CONCAT(
+                main.tbl_customers.firstname,
+                ' ',
+                main.tbl_customers.lastname
+            ) AS `Name`,
+            main.tbl_customers.email AS "Email"
+            FROM
+            main.tbl_market_leader_postal_codes AS res1
+            LEFT JOIN main.tbl_zipcodes ON res1.postal_code_id = main.tbl_zipcodes.id
+            LEFT JOIN main.tbl_customers ON res1.customer_id = main.tbl_customers.id
+            WHERE
+            main.tbl_zipcodes.id IN (
+                SELECT
+                id
+                FROM
+                main.tbl_zipcodes
+                WHERE
+                Province = %s
+                AND PostalCode = %s
+            )
+
+        """,
+        (province, postalcode)
+    )
+    logging.info("SELECTING REALTORS IN POLYGON")
+    data = curr.fetchall()
+    logging.info(data)
+    curr.close()
+    return data
+
+
 if __name__ == "__main__":
-    get_all_customers()
-    get_all_zipcodes()
+
+    with open("../demo_payloads.json", "r") as f:
+        payloads = json.load(f)
+        realtor_not_found = payloads["realtor_not_found"]
+
+    print(payloads)
+
+    get_realtors_in_polygon(province=realtor_not_found["listing_province"], postalcode="N1S 0C2")
