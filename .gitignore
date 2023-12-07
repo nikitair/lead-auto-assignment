@@ -1,3 +1,5 @@
 .venv
 .env
 *pycache*
+tbl_customers.json
+tbl_zipcodes.json
