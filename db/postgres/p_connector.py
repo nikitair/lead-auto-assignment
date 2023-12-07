@@ -20,10 +20,14 @@ def postgres_connector(func):
         conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                 password=POSTGRES_PASSWORD, host=POSTGRES_HOST, port=POSTGRES_PORT)
         logging.info("POSTGRES CONNECTED")
-        result = func(conn, *args, **kwargs)
-        conn.close()
-        logging.info("POSTGRES DISCONNECTED")
-        return result
+        try:
+            return func(conn, *args, **kwargs)
+        except Exception as ex:
+            logging.error(ex)
+        finally:
+            conn.close()
+            logging.info("POSTGRES DISCONNECTED")
+
     return inner
 
 
