@@ -11,8 +11,8 @@ POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def postgres_connector(func):
@@ -37,7 +37,7 @@ def postgres_demo_query(connector):
     curr.execute("SELECT * FROM demo")
     data = curr.fetchall()
     curr.close()
-    logging.info(data)
+    logging.debug(data)
     return data
 
 

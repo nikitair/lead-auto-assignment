@@ -1,9 +1,9 @@
 import logging
 import json
-from m_connector import mysql_connector
+from .m_connector import mysql_connector
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 @mysql_connector
 def create_table_tbl_customers(connector):
@@ -18,7 +18,7 @@ def create_table_tbl_customers(connector):
         );
         """
     )
-    logging.info("TABLE tbl_customers CREATED")
+    logging.debug("TABLE tbl_customers CREATED")
     curr.close()
 
 
@@ -28,9 +28,9 @@ def get_all_customers(connector):
     curr.execute(
         "SELECT * FROM main.tbl_customers"
     )
-    logging.info("SELECTING DATA FROM tbl_customers")
+    logging.debug("SELECTING DATA FROM tbl_customers")
     data = curr.fetchall()
-    logging.info(data)
+    logging.debug(data)
     curr.close()
     return data
 
@@ -49,7 +49,7 @@ def add_customers(connector, insert_payload: tuple):
         insert_payload
     )
     connector.commit()
-    logging.info(f"INSERTED TO tbl_customers {insert_payload[0]}")
+    logging.debug(f"INSERTED TO tbl_customers {insert_payload[0]}")
     curr.close()
 
 
@@ -66,7 +66,7 @@ def create_table_tbl_zipcodes(connector):
         );
         """
     )
-    logging.info("TABLE tbl_zipcodes CREATED")
+    logging.debug("TABLE tbl_zipcodes CREATED")
     curr.close()
 
 
@@ -76,7 +76,7 @@ def get_all_zipcodes(connector):
     curr.execute(
         "SELECT * FROM main.tbl_zipcodes"
     )
-    logging.info("SELECTING DATA FROM tbl_zipcodes")
+    logging.debug("SELECTING DATA FROM tbl_zipcodes")
     data = curr.fetchall()
     logging.info(data)
     curr.close()
@@ -97,7 +97,7 @@ def add_zipcode(connector, insert_payload: tuple):
         insert_payload
     )
     connector.commit()
-    logging.info(f"INSERTED TO tbl_zipcodes {insert_payload[0]}")
+    logging.debug(f"INSERTED TO tbl_zipcodes {insert_payload[0]}")
     curr.close()
 
 
@@ -112,7 +112,7 @@ def create_table_tbl_market_leader_postal_codes(connector):
         );
         """
     )
-    logging.info("TABLE tbl_market_leader_postal_codes CREATED")
+    logging.debug("TABLE tbl_market_leader_postal_codes CREATED")
     curr.close()
 
 
@@ -122,9 +122,9 @@ def get_all_market_leader_postal_codes(connector):
     curr.execute(
         "SELECT * FROM main.tbl_market_leader_postal_codes LIMIT 10"
     )
-    logging.info("SELECTING DATA FROM tbl_market_leader_postal_codes")
+    logging.debug("SELECTING DATA FROM tbl_market_leader_postal_codes")
     data = curr.fetchall()
-    logging.info(data)
+    logging.debug(data)
     curr.close()
     return data
 
@@ -143,7 +143,7 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
         insert_payload
     )
     connector.commit()
-    logging.info(f"INSERTED TO market_leader_postal_codes {insert_payload[0]}")
+    logging.debug(f"INSERTED TO market_leader_postal_codes {insert_payload[0]}")
     curr.close()
 
 
@@ -178,9 +178,9 @@ def get_realtors_in_polygon(connector, province, postalcode):
         """,
         (province, postalcode)
     )
-    logging.info("SELECTING REALTORS IN POLYGON")
+    logging.debug("SELECTING REALTORS IN POLYGON")
     data = curr.fetchall()
-    logging.info(data)
+    logging.debug(data)
     curr.close()
     return data
 

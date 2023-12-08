@@ -11,8 +11,8 @@ MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_PORT = os.getenv("MYSQL_PORT")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def mysql_connector(func):
@@ -41,7 +41,7 @@ def mysql_demo_query(connector):
     curr.execute("SELECT * FROM main.demo")
     data = curr.fetchall()
     curr.close()
-    logging.info(data)
+    logging.debug(data)
     return data
 
 

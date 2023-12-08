@@ -1,8 +1,8 @@
 import logging
-from p_connector import postgres_connector
+from .p_connector import postgres_connector
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 @postgres_connector
@@ -11,7 +11,7 @@ def create_schema_statistics(connector):
     curr.execute(
         "CREATE SCHEMA IF NOT EXISTS statistics;"
     )
-    logging.info("SCHEMA statistics CREATED")
+    logging.debug("SCHEMA statistics CREATED")
     curr.close()
 
 
@@ -29,7 +29,7 @@ def create_table_additional_cities(connector):
 
         """
     )
-    logging.info("TABLE statistics.market_leader_add_cities CREATED")
+    logging.debug("TABLE statistics.market_leader_add_cities CREATED")
     curr.close()
 
 
@@ -39,9 +39,9 @@ def get_all_additional_cities(connector):
     curr.execute(
         "SELECT * FROM statistics.market_leader_add_cities"
     )
-    logging.info("SELECTING DATA FROM statistics.market_leader_add_cities")
+    logging.debug("SELECTING DATA FROM statistics.market_leader_add_cities")
     data = curr.fetchall()
-    logging.info(data)
+    logging.debug(data)
     curr.close()
     return data
 
@@ -65,7 +65,7 @@ def add_additional_city(connector, insert_payload: tuple):
             insert_payload
         )
         connector.commit()
-        logging.info("INSERTED TO statistics.market_leader_add_cities")
+        logging.debug("INSERTED TO statistics.market_leader_add_cities")
 
     else:
         curr.execute(
@@ -79,7 +79,7 @@ def add_additional_city(connector, insert_payload: tuple):
             (insert_payload[2], insert_payload[0], insert_payload[1])
         )
         connector.commit()
-        logging.info("UPDATED statistics.market_leader_add_cities")
+        logging.debug("UPDATED statistics.market_leader_add_cities")
     curr.close()
 
 
@@ -97,7 +97,7 @@ def create_table_excluded_cities(connector):
 
         """
     )
-    logging.info("TABLE statistics.market_leader_excl_cities CREATED")
+    logging.debug("TABLE statistics.market_leader_excl_cities CREATED")
     curr.close()
 
 
@@ -107,9 +107,9 @@ def get_all_excluded_cities(connector):
     curr.execute(
         "SELECT * FROM statistics.market_leader_excl_cities"
     )
-    logging.info("SELECTING DATA FROM statistics.market_leader_excl_cities")
+    logging.debug("SELECTING DATA FROM statistics.market_leader_excl_cities")
     data = curr.fetchall()
-    logging.info(data)
+    logging.debug(data)
     curr.close()
     return data
 
@@ -142,7 +142,7 @@ def add_excluded_city(connector, insert_payload: tuple):
             insert_payload
         )
         connector.commit()
-        logging.info("INSERTED TO statistics.market_leader_excl_cities")
+        logging.debug("INSERTED TO statistics.market_leader_excl_cities")
     curr.close()
 
 

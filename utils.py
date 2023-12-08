@@ -1,10 +1,10 @@
-def prepare_zipcode(zipcode: str):
+def prepare_postalcode(postalcode: str):
     res = ''
-    if len(zipcode) > 0:
-        if len(zipcode) == 6:
-            res = f"{zipcode[0:3]} {zipcode[3:6]}"
+    if len(postalcode) > 0:
+        if len(postalcode) == 6:
+            res = f"{postalcode[0:3]} {postalcode[3:6]}"
         else:
-            res = zipcode
+            res = postalcode
     return res
 
 
@@ -15,8 +15,8 @@ if __name__ == "__main__":
     z4 = "N1SH0C2"
     z5 = ""
 
-    print(prepare_zipcode(z1))
-    print(prepare_zipcode(z2))
-    print(prepare_zipcode(z3))
-    print(prepare_zipcode(z4))
-    print(prepare_zipcode(z5))
+    print(prepare_postalcode(z1))
+    print(prepare_postalcode(z2))
+    print(prepare_postalcode(z3))
+    print(prepare_postalcode(z4))
+    print(prepare_postalcode(z5))
