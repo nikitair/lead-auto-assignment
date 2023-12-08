@@ -1,3 +1,6 @@
+from db.postgres import p_queries as postgres
+
+
 def prepare_postalcode(postalcode: str):
     res = ''
     if len(postalcode) > 0:
@@ -8,15 +11,18 @@ def prepare_postalcode(postalcode: str):
     return res
 
 
-if __name__ == "__main__":
-    z1 = "N1S0C2"
-    z2 = "N1S 0C2"
-    z3 = "N1S H0C2"
-    z4 = "N1SH0C2"
-    z5 = ""
+def get_not_excluded_realtors(city: str, province: str, email_array: list) -> list:
+    excluded_emails = []
+    for email in email_array:
+        excluded_email = postgres.get_excluded_cities_by_city_province_emails(city, province, email)
+        if len(excluded_email) > 0: excluded_emails.append(excluded_email[0][3])
+    not_excluded_emails = [email for email in email_array if email not in excluded_emails]
+    return not_excluded_emails
 
-    print(prepare_postalcode(z1))
-    print(prepare_postalcode(z2))
-    print(prepare_postalcode(z3))
-    print(prepare_postalcode(z4))
-    print(prepare_postalcode(z5))
+
+if __name__ == "__main__":
+    get_not_excluded_realtors(
+        city="Hanover",
+        province="Ontario",
+        email_array=['Manoj@MoveWithManoj.ca', 'nikita.stoliarov+1@actse.ltd']
+    )

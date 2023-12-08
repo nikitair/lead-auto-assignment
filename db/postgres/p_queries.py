@@ -1,4 +1,5 @@
 import logging
+from psycopg2 import sql
 from .p_connector import postgres_connector
 
 # logging.basicConfig(level=logging.DEBUG,
@@ -144,6 +145,47 @@ def add_excluded_city(connector, insert_payload: tuple):
         connector.commit()
         logging.debug("INSERTED TO statistics.market_leader_excl_cities")
     curr.close()
+
+
+@postgres_connector
+def get_additional_cities_by_city_province(connector, city: str, province: str):
+    curr = connector.cursor()
+    curr.execute(
+        """
+        SELECT * FROM statistics.market_leader_add_cities
+        WHERE city = %s
+        AND province = %s
+        """,
+        (city, province)
+    )
+    logging.debug("SELECTING DATA FROM statistics.market_leader_add_cities")
+    data = curr.fetchall()
+    logging.debug(data)
+    curr.close()
+    return data
+
+
+@postgres_connector
+def get_excluded_cities_by_city_province_emails(connector, city, province, email):
+    curr = connector.cursor()
+    curr.execute(
+        """
+        SELECT * FROM statistics.market_leader_excl_cities
+        WHERE
+            city = %s
+        AND
+            province = %s
+        AND
+            email = %s
+        LIMIT 1
+        """,
+        (city, province, email)
+    )
+    logging.debug("SELECTING DATA FROM statistics.market_leader_excl_cities")
+    data = curr.fetchall()
+    logging.debug(data)
+    curr.close()
+    return data
 
 
 if __name__ == "__main__":

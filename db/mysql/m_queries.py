@@ -107,7 +107,7 @@ def create_table_tbl_market_leader_postal_codes(connector):
     curr.execute(
         """
         CREATE TABLE IF NOT EXISTS main.tbl_market_leader_postal_codes (
-            customer_id INT PRIMARY KEY UNIQUE NOT NULL,
+            customer_id INT PRIMARY KEY NOT NULL,
             postal_code_id INT NOT NULL
         );
         """
@@ -137,8 +137,6 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
                 (customer_id, postal_code_id)
             VALUES
                 ( %s, %s)
-            ON DUPLICATE KEY
-                UPDATE customer_id = VALUES(customer_id);
     """,
         insert_payload
     )
@@ -187,10 +185,8 @@ def get_realtors_in_polygon(connector, province, postalcode):
 
 if __name__ == "__main__":
 
-    with open("../demo_payloads.json", "r") as f:
-        payloads = json.load(f)
-        realtor_not_found = payloads["realtor_not_found"]
+    with open("tbl_market_leader_postal_codes.json", "r") as f:
+        market_leader_postal_codes = json.load(f)
+        add_market_leader_postal_code(market_leader_postal_codes)
 
-    print(payloads)
-
-    get_realtors_in_polygon(province=realtor_not_found["listing_province"], postalcode="N1S 0C2")
+    
