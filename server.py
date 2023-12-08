@@ -7,7 +7,7 @@ from main import main
 app = Flask(__name__)
 
 @app.route('/lead_auto_assignment', methods=['POST'])
-def receive_json():
+def lead_auto_assignment():
     try:
         payload = request.get_json()
         logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}\n")
