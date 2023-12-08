@@ -1,3 +1,4 @@
+import logging
 from db.postgres import p_queries as postgres
 
 
@@ -16,6 +17,7 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
     for email in email_array:
         excluded_email = postgres.get_excluded_cities_by_city_province_emails(city, province, email)
         if len(excluded_email) > 0: excluded_emails.append(excluded_email[0][3])
+    logging.info(f"EXCLUDED REALTORS -- {excluded_emails}")
     not_excluded_emails = [email for email in email_array if email not in excluded_emails]
     return not_excluded_emails
 
