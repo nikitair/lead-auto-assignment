@@ -28,7 +28,7 @@ def mysql_connector(func):
         try:
             return func(connection, *args, **kwargs)
         except Exception as ex:
-            logging.error(ex)
+            logging.error(f"\n!!! MYSQL ERROR -- {ex}\n")
         finally:
             connection.close()
             logging.info("MYSQL DISCONNECTED")

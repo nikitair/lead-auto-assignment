@@ -22,6 +22,7 @@ def lead_auto_assignment():
     
     except Exception as e:
         error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
+        logging.error(f"\n!!! SERVER ERROR OCCURED -- {str(e)}\n")
         return jsonify(error_message), 400
 
 if __name__ == '__main__':
