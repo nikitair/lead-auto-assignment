@@ -1,5 +1,5 @@
 import logging
-from psycopg2 import sql
+import pretty_errors
 from .p_connector import postgres_connector
 
 # logging.basicConfig(level=logging.DEBUG,

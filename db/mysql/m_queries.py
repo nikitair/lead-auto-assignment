@@ -1,4 +1,5 @@
 import logging
+import pretty_errors
 import json
 from .m_connector import mysql_connector
 

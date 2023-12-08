@@ -1,5 +1,6 @@
 import os
 import logging
+import pretty_errors
 from dotenv import load_dotenv
 import psycopg2
 

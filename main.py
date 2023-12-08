@@ -1,14 +1,15 @@
 import json
+import pretty_errors
 import logging
 from utils import prepare_postalcode, get_not_excluded_realtors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def main(mls: str, postalcode: str, listing_province: str, buyer_city: str, buyer_province: str, email: str) -> dict:
+def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province: str) -> dict:
     response = {
         "realtor_1": 0,
         "realtor_emails": []
@@ -27,7 +28,7 @@ def main(mls: str, postalcode: str, listing_province: str, buyer_city: str, buye
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
     else:
-        # search in polygons
+        # search realtors in polygons
         realtors_in_polygon = [realtor[2] for realtor in mysql.get_realtors_in_polygon(province, postalcode)]
         logging.info(f"ALL REALTORS IN POLYGON -- {realtors_in_polygon}")
 
@@ -41,7 +42,6 @@ def main(mls: str, postalcode: str, listing_province: str, buyer_city: str, buye
                 for realtor in not_excluded_realtors:
                     response["realtor_emails"].append(realtor)
 
-
     logging.info(f"RESULT RESPONSE -- {response}")
     return response
 
@@ -50,11 +50,11 @@ if __name__ == "__main__":
     with open("demo_payloads.json", "r") as f:
         demo_payloads = json.load(f)
         payload = demo_payloads["polygon_no_exluded"]
-        mls = payload["listing_mls"]
+        # mls = payload["listing_mls"]
         postalcode = payload["listing_zip"]
         listing_province = payload["listing_province"]
         buyer_city = payload["buyer_city"]
         buyer_province = payload["buyer_province"]
-        email = payload["buyer_email"]
+        # email = payload["buyer_email"]
 
-    main(mls, postalcode, listing_province, buyer_city, buyer_province, email)
+    main(postalcode, listing_province, buyer_city, buyer_province)
