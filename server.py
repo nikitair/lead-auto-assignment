@@ -13,7 +13,9 @@ def index():
     entry endpoint for server running check 
     """
     try:
-        return jsonify({"status": "success", "message": "Hello World!"}), 200
+        payload = request.get_json()
+        logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}")
+        return jsonify({"status": "success", "message": "Hello World!", "payload": payload}), 200
     except Exception as e:
         error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
         logging.error(f"\n!!! SERVER ERROR OCCURRED -- {str(e)}\n")
