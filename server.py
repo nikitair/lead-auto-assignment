@@ -7,19 +7,12 @@ from main import main
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
 def index():
     """
     echo endpoint for server health check 
     """
-    payload = {}
-    if request.method == "POST":
-        try:
-            payload = request.get_json()
-            logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}")
-        except Exception:
-            pass
-    return jsonify({"status": "success", "message": "Hello World!", "payload": payload}), 200
+    return jsonify({"status": "success", "message": "Hello World!"}), 200
 
 
 @app.route('/lead_auto_assignment', methods=['POST'])
