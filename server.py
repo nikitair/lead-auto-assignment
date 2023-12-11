@@ -32,4 +32,4 @@ def lead_auto_assignment():
         return jsonify(error_message), 400
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8074)
+    app.run(debug=False, port=8080)
