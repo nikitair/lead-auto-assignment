@@ -13,13 +13,14 @@ def index():
     echo endpoint for server health check 
     """
     payload = {}
-    try:
-        payload = request.get_json()
-        logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}")
-    except Exception as e:
-        error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
-        logging.error(f"\n!!! SERVER ERROR OCCURRED -- {str(e)}\n")
-        return jsonify(error_message), 400
+    if request.method == "POST":
+        try:
+            payload = request.get_json()
+            logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}")
+        except Exception as e:
+            error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
+            logging.error(f"\n!!! SERVER ERROR OCCURRED -- {str(e)}\n")
+            return jsonify(error_message), 400
     else:
         return jsonify({"status": "success", "message": "Hello World!", "payload": payload}), 200
 
