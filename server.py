@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """
-    entry endpoint for server running check 
+    echo endpoint for server health check 
     """
     try:
         payload = request.get_json()
@@ -46,6 +46,7 @@ def lead_auto_assignment():
         error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
         logging.error(f"\n!!! SERVER ERROR OCCURRED -- {str(e)}\n")
         return jsonify(error_message), 400
+
 
 if __name__ == '__main__':
     app.run(debug=False, port=8080)
