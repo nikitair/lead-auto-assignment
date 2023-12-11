@@ -6,6 +6,20 @@ from main import main
 
 app = Flask(__name__)
 
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    """
+    entry endpoint for server running check 
+    """
+    try:
+        return jsonify({"status": "success", "message": "Hello World!"}), 200
+    except Exception as e:
+        error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
+        logging.error(f"\n!!! SERVER ERROR OCCURRED -- {str(e)}\n")
+        return jsonify(error_message), 400
+
+
 @app.route('/lead_auto_assignment', methods=['POST'])
 def lead_auto_assignment():
     """
