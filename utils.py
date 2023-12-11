@@ -4,6 +4,9 @@ from db.postgres import p_queries as postgres
 
 
 def prepare_postalcode(postalcode: str):
+    """
+    formats formats code into desired format -- A1A1A1 -> A1A 1A1 
+    """
     res = ''
     if len(postalcode) > 0:
         if len(postalcode) == 6:
@@ -14,6 +17,9 @@ def prepare_postalcode(postalcode: str):
 
 
 def get_not_excluded_realtors(city: str, province: str, email_array: list) -> list:
+    """
+    returns realtors who are not in excluded cities table
+    """
     excluded_emails = []
     for email in email_array:
         excluded_email = postgres.get_excluded_cities_by_city_province_emails(city, province, email)

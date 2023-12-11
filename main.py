@@ -10,33 +10,38 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province: str) -> dict:
+    """
+    the main function that executes full lead auto assignment cycle
+    """
     response = {
         "realtor_1": 0,
         "realtor_emails": []
     }
 
     province = listing_province if listing_province not in (None, "") else buyer_province
-    postalcode = prepare_postalcode(postalcode)
+    postalcode = prepare_postalcode(postalcode) # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
 
-    # search in additional cities
+    # searching in additional cities
     additional_cities = postgres.get_additional_cities_by_city_province(
         city=buyer_city, province=province)
-    logging.info(f"ADDITIOANL CITIES -- {additional_cities}")
+    logging.info(f"ADDITIONAL CITIES -- {additional_cities}")
 
+    # found in additional cities; returning those realtor
     if len(additional_cities) > 0:
         response["realtor_1"] = 1
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
     else:
-        # search realtors in polygons
+        # searching for realtors in overlapping polygons
         realtors_in_polygon = [realtor[2] for realtor in mysql.get_realtors_in_polygon(province, postalcode)]
         logging.info(f"ALL REALTORS IN POLYGON -- {realtors_in_polygon}")
 
         if len(realtors_in_polygon) > 0:
-            # search for realtors who are NOT excluded
+            # searching for realtors who's city is NOT excluded
             not_excluded_realtors = get_not_excluded_realtors(buyer_city, province, realtors_in_polygon)
             logging.info(f"NOT EXCLUDED REALTORS -- {not_excluded_realtors}")
 
+            # realtors found in overlapping polygon; returning them
             if len(not_excluded_realtors) > 0:
                 response["realtor_1"] = 1
                 for realtor in not_excluded_realtors:

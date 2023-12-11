@@ -17,6 +17,9 @@ POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
 
 def postgres_connector(func):
+    """
+    decorator that connects to Postgres DB and executes inputted query handler; handles exceptions
+    """
     def inner(*args, **kwargs):
         conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                 password=POSTGRES_PASSWORD, host=POSTGRES_HOST, port=POSTGRES_PORT)
@@ -32,6 +35,7 @@ def postgres_connector(func):
     return inner
 
 
+# demo postgres_connector decorator use case
 @postgres_connector
 def postgres_demo_query(connector):
     curr = connector.cursor()

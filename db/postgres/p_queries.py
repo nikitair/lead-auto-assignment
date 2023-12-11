@@ -51,7 +51,7 @@ def get_all_additional_cities(connector):
 def add_additional_city(connector, insert_payload: tuple):
     curr = connector.cursor()
 
-    # serching for the same City AND Province combination
+    # searching for the same City AND Province combination
     curr.execute("SELECT * FROM statistics.market_leader_add_cities WHERE city = %s AND province = %s",
                  (insert_payload[0], insert_payload[1]))
     duplicates = curr.fetchall()

@@ -17,6 +17,9 @@ MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
 
 def mysql_connector(func):
+    """
+    decorator that connects to MySQL DB and executes inputted query handler; handles exceptions
+    """
     def inner(*args, **kwargs):
         connection = mysql.connector.connect(
             host=MYSQL_HOST,
@@ -36,6 +39,7 @@ def mysql_connector(func):
     return inner
 
 
+# mysql_connector demo use case
 @mysql_connector
 def mysql_demo_query(connector):
     curr = connector.cursor()
