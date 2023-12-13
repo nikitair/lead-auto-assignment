@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import pretty_errors
 import pprint
 import logging
+from a2wsgi import WSGIMiddleware
 from main import main
 
 app = Flask(__name__)
@@ -41,5 +42,6 @@ def lead_auto_assignment():
         return jsonify(error_message), 400
 
 
+app = WSGIMiddleware(app)
 if __name__ == '__main__':
-    app.run(debug=False, port=8080)
+    app.run(debug=True, port=5000, host='0.0.0.0')
