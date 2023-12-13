@@ -6,7 +6,8 @@ from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[logging.FileHandler('logs.log')])
 
 
 def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province: str) -> dict:
