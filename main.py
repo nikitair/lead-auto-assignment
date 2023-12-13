@@ -5,7 +5,7 @@ from utils import prepare_postalcode, get_not_excluded_realtors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
