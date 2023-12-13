@@ -4,3 +4,4 @@
 tbl_customers.json
 tbl_zipcodes.json
 tbl_market_leader_postal_codes.json
+*.log
