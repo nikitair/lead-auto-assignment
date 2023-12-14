@@ -152,23 +152,23 @@ def get_realtors_in_polygon(connector, province, postalcode):
     curr.execute(
         """
         SELECT DISTINCT
-            main.tbl_zipcodes.City AS "City",
+            tbl_zipcodes.City AS "City",
             CONCAT(
-                main.tbl_customers.firstname,
+                tbl_customers.firstname,
                 ' ',
-                main.tbl_customers.lastname
+                tbl_customers.lastname
             ) AS `Name`,
-            main.tbl_customers.email AS "Email"
+            tbl_customers.email AS "Email"
             FROM
-            main.tbl_market_leader_postal_codes AS res1
-            LEFT JOIN main.tbl_zipcodes ON res1.postal_code_id = main.tbl_zipcodes.id
-            LEFT JOIN main.tbl_customers ON res1.customer_id = main.tbl_customers.id
+            tbl_market_leader_postal_codes AS res1
+            LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
+            LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
             WHERE
-            main.tbl_zipcodes.id IN (
+            tbl_zipcodes.id IN (
                 SELECT
                 id
                 FROM
-                main.tbl_zipcodes
+                tbl_zipcodes
                 WHERE
                 Province = %s
                 AND PostalCode = %s
