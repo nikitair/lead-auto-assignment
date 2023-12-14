@@ -5,10 +5,24 @@ from utils import prepare_postalcode, get_not_excluded_realtors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    # handlers=[logging.FileHandler('logs.log')]
-                    )
+# Create a logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Create a formatter
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+# Create a console handler and set the level to DEBUG
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# Create a file handler and set the level to DEBUG
+fh = logging.FileHandler('logs.log')
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 
 def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province: str) -> dict:
@@ -20,8 +34,10 @@ def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province
         "realtor_emails": []
     }
 
-    province = listing_province if listing_province not in (None, "") else buyer_province
-    postalcode = prepare_postalcode(postalcode) # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
+    province = listing_province if listing_province not in (
+        None, "") else buyer_province
+    # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
+    postalcode = prepare_postalcode(postalcode)
 
     # searching in additional cities
     additional_cities = postgres.get_additional_cities_by_city_province(
@@ -35,12 +51,14 @@ def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province
             response["realtor_emails"].append(city[3])
     else:
         # searching for realtors in overlapping polygons
-        realtors_in_polygon = [realtor[2] for realtor in mysql.get_realtors_in_polygon(province, postalcode)]
+        realtors_in_polygon = [
+            realtor[2] for realtor in mysql.get_realtors_in_polygon(province, postalcode)]
         logging.info(f"ALL REALTORS IN POLYGON -- {realtors_in_polygon}")
 
         if len(realtors_in_polygon) > 0:
             # searching for realtors who's city is NOT excluded
-            not_excluded_realtors = get_not_excluded_realtors(buyer_city, province, realtors_in_polygon)
+            not_excluded_realtors = get_not_excluded_realtors(
+                buyer_city, province, realtors_in_polygon)
             logging.info(f"NOT EXCLUDED REALTORS -- {not_excluded_realtors}")
 
             # realtors found in overlapping polygon; returning them
