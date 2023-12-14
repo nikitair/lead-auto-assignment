@@ -5,20 +5,18 @@ from utils import prepare_postalcode, get_not_excluded_realtors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
-# Create a logger
+# Logging configuration
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-# Create a formatter
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
-# Create a console handler and set the level to DEBUG
+# Terminal output
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-# Create a file handler and set the level to DEBUG
+# File output
 fh = logging.FileHandler('logs.log')
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(formatter)
