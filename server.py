@@ -27,11 +27,11 @@ def lead_auto_assignment():
         logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}\n")
 
         # extracting useful information from the payload
-        postalcode = payload.get("listing_zip")
-        listing_province = payload.get("listing_province")
-        listing_city = payload.get("listing_city")
-        buyer_city = payload.get("buyer_city")
-        buyer_province = payload.get("buyer_province")
+        postalcode = payload.get("listing_zip") if payload.get("listing_zip") != "N/A" else ""
+        listing_province = payload.get("listing_province") if payload.get("listing_province") != "N/A" else ""
+        listing_city = payload.get("listing_city") if payload.get("listing_city") != "N/A" else ""
+        buyer_city = payload.get("buyer_city") if payload.get("buyer_city") != "N/A" else ""
+        buyer_province = payload.get("buyer_province") if payload.get("buyer_province") != "N/A" else ""
 
         # executing lead auto assignment function; returning result
         result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province)
