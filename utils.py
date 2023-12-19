@@ -8,11 +8,12 @@ def prepare_postalcode(postalcode: str):
     formats formats code into desired format -- A1A1A1 -> A1A 1A1 
     """
     res = ''
-    if len(postalcode) > 0:
-        if len(postalcode) == 6:
-            res = f"{postalcode[0:3]} {postalcode[3:6]}"
-        else:
-            res = postalcode
+    if type(postalcode) == str:
+        if len(postalcode) > 0:
+            if len(postalcode) == 6:
+                res = f"{postalcode[0:3]} {postalcode[3:6]}"
+            else:
+                res = postalcode
     return res
 
 

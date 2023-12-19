@@ -29,11 +29,12 @@ def lead_auto_assignment():
         # extracting useful information from the payload
         postalcode = payload.get("listing_zip")
         listing_province = payload.get("listing_province")
+        listing_city = payload.get("listing_city")
         buyer_city = payload.get("buyer_city")
         buyer_province = payload.get("buyer_province")
 
         # executing lead auto assignment function; returning result
-        result = main(postalcode, listing_province, buyer_city, buyer_province)
+        result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province)
         return jsonify(result), 200
     
     except Exception as e:

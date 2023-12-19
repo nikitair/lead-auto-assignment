@@ -1,4 +1,5 @@
 import json
+from random import randint
 import pretty_errors
 import logging
 from utils import prepare_postalcode, get_not_excluded_realtors
@@ -23,17 +24,21 @@ fh.setFormatter(formatter)
 logger.addHandler(fh)
 
 
-def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province: str) -> dict:
+def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str) -> dict:
     """
     the main function that executes full lead auto assignment cycle
     """
     response = {
         "realtor_1": 0,
-        "realtor_emails": []
+        "realtor_emails": [],
+        "assigned_realtor": "willow@fb4s.com"
     }
 
     province = listing_province if listing_province not in (
         None, "") else buyer_province
+    city = listing_city if listing_city not in (
+        None, "") else buyer_city
+    
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)
 
@@ -47,10 +52,11 @@ def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province
         response["realtor_1"] = 1
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
+        response["assigned_realtor"] = response["realtor_emails"][randint(0, len(response["realtor_emails"]))]
     else:
         # searching for realtors in overlapping polygons
         realtors_in_polygon = [
-            realtor[2] for realtor in mysql.get_realtors_in_polygon(province, postalcode)]
+            realtor[2] for realtor in mysql.get_realtors_in_polygon(city, province, postalcode)]
         logging.info(f"ALL REALTORS IN POLYGON -- {realtors_in_polygon}")
 
         if len(realtors_in_polygon) > 0:
@@ -64,6 +70,7 @@ def main(postalcode: str, listing_province: str, buyer_city: str, buyer_province
                 response["realtor_1"] = 1
                 for realtor in not_excluded_realtors:
                     response["realtor_emails"].append(realtor)
+                response["assigned_realtor"] = response["realtor_emails"][randint(0, len(response["realtor_emails"]))]
 
     logging.info(f"RESULT RESPONSE -- {response}")
     return response

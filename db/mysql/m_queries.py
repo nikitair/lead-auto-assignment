@@ -147,36 +147,39 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
 
 
 @mysql_connector
-def get_realtors_in_polygon(connector, province, postalcode):
+def get_realtors_in_polygon(connector, city, province, postalcode):
     curr = connector.cursor()
-    curr.execute(
-        """
+
+    query_payload = [province]
+    query = """
         SELECT DISTINCT
             tbl_zipcodes.City AS "City",
-            CONCAT(
-                tbl_customers.firstname,
-                ' ',
-                tbl_customers.lastname
-            ) AS `Name`,
+            CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
             tbl_customers.email AS "Email"
-            FROM
+        FROM
             tbl_market_leader_postal_codes AS res1
-            LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
-            LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
-            WHERE
-            tbl_zipcodes.id IN (
-                SELECT
+        LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
+        LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
+        WHERE
+        tbl_zipcodes.id IN (
+            SELECT
                 id
-                FROM
+            FROM
                 tbl_zipcodes
-                WHERE
+            WHERE
                 Province = %s
-                AND PostalCode = %s
-            )
+        """
+    
+    if city:
+        query += " AND City = %s"
+        query_payload.append(city)
+    if postalcode:
+        query += " AND PostalCode = %s"
+        query_payload.append(postalcode)
+    query += " )"
 
-        """,
-        (province, postalcode)
-    )
+    curr.execute(query, tuple(query_payload))
+
     logging.debug("SELECTING REALTORS IN POLYGON")
     data = curr.fetchall()
     logging.debug(data)
