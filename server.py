@@ -21,7 +21,6 @@ def lead_auto_assignment():
     """
     lead auto assignment endpoint
     """
-    # try:
     # receiving lead payload
     payload = request.get_json()
     logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}\n")
@@ -36,11 +35,6 @@ def lead_auto_assignment():
     # executing lead auto assignment function; returning result
     result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province)
     return jsonify(result), 200
-    
-    # except Exception as e:
-    #     error_message = {"status": "fail", "error": "Bad request", "details": str(e)}
-    #     logging.error(f"\n!!! SERVER ERROR OCCURRED -- {str(e)}\n")
-    #     return jsonify(error_message), 400
 
 
 app = WSGIMiddleware(app)

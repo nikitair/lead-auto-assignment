@@ -34,8 +34,6 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
         "assigned_realtor": "willow@fb4s.com"
     }
 
-    # _args = ("" for arg in (postalcode, listing_province, listing_city, buyer_city, buyer_province) if arg == "N/A")
-    # postalcode, listing_province, listing_city, buyer_city, buyer_province = _args
 
     province = listing_province if listing_province not in (
         None, "") else buyer_province
