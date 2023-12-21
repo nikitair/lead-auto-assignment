@@ -5,6 +5,25 @@ import logging
 from a2wsgi import WSGIMiddleware
 from main import main
 
+
+# Logging configuration
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+# Terminal output
+th = logging.StreamHandler()
+th.setLevel(logging.DEBUG)
+th.setFormatter(formatter)
+logger.addHandler(th)
+
+# File output
+fh = logging.FileHandler('logs.log')
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
+
 app = Flask(__name__)
 
 
@@ -26,11 +45,16 @@ def lead_auto_assignment():
     logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}\n")
 
     # extracting useful information from the payload
-    postalcode = payload.get("listing_zip") if payload.get("listing_zip") != "N/A" else ""
-    listing_province = payload.get("listing_province") if payload.get("listing_province") != "N/A" else ""
-    listing_city = payload.get("listing_city") if payload.get("listing_city") != "N/A" else ""
-    buyer_city = payload.get("buyer_city") if payload.get("buyer_city") != "N/A" else ""
-    buyer_province = payload.get("buyer_province") if payload.get("buyer_province") != "N/A" else ""
+    postalcode = payload.get("listing_zip") if payload.get(
+        "listing_zip") != "N/A" else ""
+    listing_province = payload.get("listing_province") if payload.get(
+        "listing_province") != "N/A" else ""
+    listing_city = payload.get("listing_city") if payload.get(
+        "listing_city") != "N/A" else ""
+    buyer_city = payload.get("buyer_city") if payload.get(
+        "buyer_city") != "N/A" else ""
+    buyer_province = payload.get("buyer_province") if payload.get(
+        "buyer_province") != "N/A" else ""
 
     print(postalcode)
     print(listing_province)
@@ -39,7 +63,8 @@ def lead_auto_assignment():
     print(buyer_province)
 
     # executing lead auto assignment function; returning result
-    result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province)
+    result = main(postalcode, listing_province,
+                  listing_city, buyer_city, buyer_province)
     return jsonify(result), 200
 
 

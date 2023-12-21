@@ -6,23 +6,6 @@ from utils import prepare_postalcode, get_not_excluded_realtors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
-# Logging configuration
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-# Terminal output
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
-# File output
-fh = logging.FileHandler('logs.log')
-fh.setLevel(logging.DEBUG)
-fh.setFormatter(formatter)
-logger.addHandler(fh)
-
 
 def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str) -> dict:
     """
@@ -34,15 +17,14 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
         "assigned_realtor": "willow@fb4s.com"
     }
 
-
     province = listing_province if listing_province not in (
         None, "") else buyer_province
     city = listing_city if listing_city not in (
         None, "") else buyer_city
-    
+
     print(f"province we will use -> {province}")
     print(f"city we will use -> {city}")
-    
+
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)
 
@@ -56,7 +38,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
         response["realtor_1"] = 1
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
-        response["assigned_realtor"] = response["realtor_emails"][randint(0, len(response["realtor_emails"]) - 1)]
+        response["assigned_realtor"] = response["realtor_emails"][randint(
+            0, len(response["realtor_emails"]) - 1)]
     else:
         # searching for realtors in overlapping polygons
         realtors_in_polygon = [
@@ -74,7 +57,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
                 response["realtor_1"] = 1
                 for realtor in not_excluded_realtors:
                     response["realtor_emails"].append(realtor)
-                response["assigned_realtor"] = response["realtor_emails"][randint(0, len(response["realtor_emails"]) - 1)]
+                response["assigned_realtor"] = response["realtor_emails"][randint(
+                    0, len(response["realtor_emails"]) - 1)]
 
     logging.info(f"RESULT RESPONSE -- {response}")
     return response
