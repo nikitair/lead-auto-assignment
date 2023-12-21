@@ -50,7 +50,8 @@ def lead_auto_assignment():
                   listing_city, buyer_city, buyer_province)
     return jsonify(result), 200
 
-
+# configuring wsgi
 app = WSGIMiddleware(app)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
