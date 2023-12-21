@@ -166,18 +166,17 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
                 id
             FROM
                 tbl_zipcodes
-            WHERE
-                Province = %s
         """
     
-    if city:
-        query += " AND City = %s"
-        query_payload.append(city)
-    if postalcode:
-        query += " AND PostalCode = %s"
-        query_payload.append(postalcode)
+    if not postalcode or postalcode == "N/A":
+        query += " WHERE PostalCode = %s"
+        if city:
+            query += " AND City = %s"
+            query_payload.append(city)
+    else:
+        query += " WHERE PostalCode = %s"
+        query_payload = [postalcode]
     query += " )"
-
     curr.execute(query, tuple(query_payload))
 
     logging.debug("SELECTING REALTORS IN POLYGON")
