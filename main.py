@@ -40,6 +40,9 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     city = listing_city if listing_city not in (
         None, "") else buyer_city
     
+    print(f"province we will use -> {province}")
+    print(f"city we will use -> {city}")
+    
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)
 

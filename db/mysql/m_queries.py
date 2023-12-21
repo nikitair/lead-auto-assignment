@@ -168,7 +168,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
                 tbl_zipcodes
         """
     
-    if not postalcode or postalcode == "N/A":
+    if not postalcode:
         query += " WHERE PostalCode = %s"
         if city:
             query += " AND City = %s"
