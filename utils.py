@@ -1,4 +1,4 @@
-import logging
+from logging_config import logger as  logging
 import pretty_errors
 from db.postgres import p_queries as postgres
 

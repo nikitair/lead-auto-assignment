@@ -1,6 +1,6 @@
 import os
 import pretty_errors
-import logging
+from logging_config import logger as  logging
 from dotenv import load_dotenv
 import mysql.connector
 

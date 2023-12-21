@@ -1,4 +1,4 @@
-import logging
+from logging_config import logger as  logging
 import pretty_errors
 from .p_connector import postgres_connector
 

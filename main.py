@@ -1,7 +1,7 @@
 import json
 from random import randint
 import pretty_errors
-import logging
+from logging_config import logger as  logging
 from utils import prepare_postalcode, get_not_excluded_realtors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
@@ -22,8 +22,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     city = listing_city if listing_city not in (
         None, "") else buyer_city
 
-    print(f"province we will use -> {province}")
-    print(f"city we will use -> {city}")
+    logging.info(f"PROVINCE -- {province}")
+    logging.info(f"CITY -- {city}")
 
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)

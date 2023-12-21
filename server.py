@@ -1,27 +1,9 @@
 from flask import Flask, request, jsonify
 import pretty_errors
 import pprint
-import logging
+from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
 from main import main
-
-
-# Logging configuration
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-# Terminal output
-th = logging.StreamHandler()
-th.setLevel(logging.DEBUG)
-th.setFormatter(formatter)
-logger.addHandler(th)
-
-# File output
-fh = logging.FileHandler('logs.log')
-fh.setLevel(logging.DEBUG)
-fh.setFormatter(formatter)
-logger.addHandler(fh)
 
 
 app = Flask(__name__)
@@ -32,6 +14,7 @@ def index():
     """
     echo endpoint for server health check 
     """
+    logging.info("INDEX ENDPOINT TRIGGERED")
     return jsonify({"status": "success", "message": "Hello World!"}), 200
 
 
@@ -56,11 +39,11 @@ def lead_auto_assignment():
     buyer_province = payload.get("buyer_province") if payload.get(
         "buyer_province") != "N/A" else ""
 
-    print(postalcode)
-    print(listing_province)
-    print(listing_city)
-    print(buyer_city)
-    print(buyer_province)
+    logging.info(f"POSTALCODE AFTER FORMATTING -- {postalcode}")
+    logging.info(f"LISTING PROVINCE AFTER FORMATTING -- {listing_province}")
+    logging.info(f"LISTING CITY AFTER FORMATTING -- {listing_city}")
+    logging.info(f"BUYER PROVINCE AFTER FORMATTING -- {buyer_province}")
+    logging.info(f"BUYER CITY AFTER FORMATTING -- {buyer_city}")
 
     # executing lead auto assignment function; returning result
     result = main(postalcode, listing_province,

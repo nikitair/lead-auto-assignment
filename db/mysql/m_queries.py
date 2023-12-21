@@ -1,4 +1,4 @@
-import logging
+from logging_config import logger as  logging
 import pretty_errors
 import json
 from .m_connector import mysql_connector
@@ -173,13 +173,14 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         if city:
             query += " AND City = %s"
             query_payload.append(city)
+        logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
     else:
         query += " WHERE PostalCode = %s"
         query_payload = [postalcode]
+        logging.debug("SELECTING REALTORS IN POLYGON BY POSTALCODE")
     query += " )"
     curr.execute(query, tuple(query_payload))
 
-    logging.debug("SELECTING REALTORS IN POLYGON")
     data = curr.fetchall()
     logging.debug(data)
     curr.close()
