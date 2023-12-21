@@ -169,7 +169,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         """
     
     if not postalcode:
-        query += " WHERE PostalCode = %s"
+        query += " WHERE Province = %s"
         if city:
             query += " AND City = %s"
             query_payload.append(city)
