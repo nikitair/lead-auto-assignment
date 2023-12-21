@@ -14,7 +14,7 @@ def index():
     """
     echo endpoint for server health check 
     """
-    logging.info("INDEX ENDPOINT TRIGGERED")
+    logging.info(f"INDEX ENDPOINT TRIGGERED -- {request.method}")
     return jsonify({"status": "success", "message": "Hello World!"}), 200
 
 
@@ -51,6 +51,6 @@ def lead_auto_assignment():
     return jsonify(result), 200
 
 
-app = WSGIMiddleware(app)
+# app = WSGIMiddleware(app)
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
