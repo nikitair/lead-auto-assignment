@@ -54,6 +54,11 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
             # realtors found in overlapping polygon; returning them
             if len(not_excluded_realtors) > 0:
+
+                #
+                #round-robin logic here
+                #
+
                 response["realtor_1"] = 1
                 for realtor in not_excluded_realtors:
                     response["realtor_emails"].append(realtor)

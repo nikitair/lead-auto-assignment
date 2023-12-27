@@ -1,4 +1,4 @@
-from logging_config import logger as  logging
+from logging_config import logger as logging
 import pretty_errors
 from .p_connector import postgres_connector
 
@@ -182,6 +182,28 @@ def get_excluded_cities_by_city_province_emails(connector, city, province, email
         (city, province, email)
     )
     logging.debug("SELECTING DATA FROM statistics.market_leader_excl_cities")
+    data = curr.fetchall()
+    logging.debug(data)
+    curr.close()
+    return data
+
+
+@postgres_connector
+def get_realtor_to_assign(connector, realtor_firstname, realtor_lastname, realtor_email):
+    curr = connector.cursor()
+    curr.execute(
+        """
+        SELECT * FROM statistics.lead_auto_assignment
+        WHERE
+            realtor_firstname = %s
+        AND
+            realtor_lastname = %s
+        AND
+            realtor_email = %s
+        """,
+        (realtor_firstname, realtor_lastname, realtor_email)
+    )
+    logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
     data = curr.fetchall()
     logging.debug(data)
     curr.close()
