@@ -27,6 +27,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)
+    logging.info(f"POSTAL CODE AFTER FORMATTING -- {postgres}")
 
     # searching in additional cities
     additional_cities = postgres.get_additional_cities_by_city_province(
