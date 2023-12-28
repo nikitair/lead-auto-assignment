@@ -88,14 +88,4 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
 
 if __name__ == "__main__":
-    with open("demo_payloads.json", "r") as f:
-        demo_payloads = json.load(f)
-        payload = demo_payloads["polygon_no_excluded"]
-        # mls = payload["listing_mls"]
-        postalcode = payload["listing_zip"]
-        listing_province = payload["listing_province"]
-        buyer_city = payload["buyer_city"]
-        buyer_province = payload["buyer_province"]
-        # email = payload["buyer_email"]
-
-    main(postalcode, listing_province, buyer_city, buyer_province)
+    main("N/A", "N/A", "N/A", "N/A", "N/A", "N/A")

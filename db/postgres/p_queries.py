@@ -233,7 +233,7 @@ def get_realtor_to_assign(connector, realtor_emails):
     )
     logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
     data = curr.fetchall()
-    logging.debug(data)
+    logging.info(f"ASSIGNED REALTOR {data}")
     curr.close()
     return data
 
@@ -276,6 +276,7 @@ def add_assigned_realtor(connector, realtor_email):
         )
     connector.commit()
     logging.debug("INSERTED TO statistics.lead_auto_assignment")
+    logging.info(f"UPDATED TIME OF ASSIGNMENT FOR {realtor_email}")
     connector.commit()
 
 
