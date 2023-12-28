@@ -184,24 +184,23 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             curr.close()
             return data
         else:
-            print(1)
+            logging.debug("1")
             query.replace(" WHERE PostalCode = %s )", "")
-            print(2, query)
+            logging.debug(f"2, {query}")
             query_payload = [province]
-            print(3, query_payload)
+            logging.debug(f"3, {query_payload}")
             query += " WHERE Province = %s"
-            print(4, query)
+            logging.debug(f"4, {query}")
             if city:
-                print(4.4)
                 query += " AND City = %s"
-                print(4.5, query)
+                logging.debug(f"4.1, {query}")
                 query_payload.append(city)
-                print(4.6, query_payload)
-            print(5)
+                logging.debug(f"4.2, {query_payload}")
+            logging.debug("5")
             logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
             query += " )"
-            print(6, query)
-            print(query_payload)
+            logging.debug(f"6, {query}")
+            logging.debug(f"{query_payload}")
             curr.execute(query, tuple(query_payload))
 
             data = curr.fetchall()
