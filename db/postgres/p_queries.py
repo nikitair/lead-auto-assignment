@@ -281,10 +281,4 @@ def add_assigned_realtor(connector, realtor_email):
 
 
 if __name__ == "__main__":
-    add_additional_city(
-        insert_payload=("Fergus", "Ontario", "nikita.stoliarov+1@actse.ltd")
-    )
-    get_all_additional_cities()
-    # add_excluded_city(insert_payload=(
-    #     "Hanover", "Ontario", "nikita.stoliarov+1@actse.ltd"))
-    # get_all_excluded_cities()
+    ...

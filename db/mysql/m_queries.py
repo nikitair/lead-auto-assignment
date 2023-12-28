@@ -261,7 +261,4 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
 
 
 if __name__ == "__main__":
-
-    with open("tbl_market_leader_postal_codes.json", "r") as f:
-        market_leader_postal_codes = json.load(f)
-        add_market_leader_postal_code(market_leader_postal_codes)
+    ...

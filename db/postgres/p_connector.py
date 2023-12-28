@@ -47,4 +47,4 @@ def postgres_demo_query(connector):
 
 
 if __name__ == "__main__":
-    postgres_demo_query()
+    ...

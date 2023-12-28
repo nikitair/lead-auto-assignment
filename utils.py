@@ -31,8 +31,4 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
 
 
 if __name__ == "__main__":
-    get_not_excluded_realtors(
-        city="Hanover",
-        province="Ontario",
-        email_array=['Manoj@MoveWithManoj.ca', 'nikita.stoliarov+1@actse.ltd']
-    )
+    ...
