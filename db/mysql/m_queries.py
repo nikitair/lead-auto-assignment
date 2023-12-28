@@ -1,10 +1,11 @@
-from logging_config import logger as  logging
+from logging_config import logger as logging
 import pretty_errors
 import json
 from .m_connector import mysql_connector
 
 # logging.basicConfig(level=logging.DEBUG,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 @mysql_connector
 def create_table_tbl_customers(connector):
@@ -142,7 +143,8 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
         insert_payload
     )
     connector.commit()
-    logging.debug(f"INSERTED TO market_leader_postal_codes {insert_payload[0]}")
+    logging.debug(
+        f"INSERTED TO market_leader_postal_codes {insert_payload[0]}")
     curr.close()
 
 
@@ -167,24 +169,71 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             FROM
                 tbl_zipcodes
         """
-    
-    if not postalcode:
+
+    if postalcode:
+        query += " WHERE PostalCode = %s"
+        query_payload = [postalcode]
+        logging.debug("SELECTING REALTORS IN POLYGON BY POSTALCODE")
+        query += " )"
+        curr.execute(query, tuple(query_payload))
+
+        data = curr.fetchall()
+        logging.debug(data)
+
+        if len(data) > 0:
+            curr.close()
+            return data
+        else:
+            query.replace(" WHERE PostalCode = %s )", "")
+            query_payload = [province]
+            query += " WHERE Province = %s"
+            if city:
+                query += " AND City = %s"
+                query_payload.append(city)
+            logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
+            query += " )"
+            curr.execute(query, tuple(query_payload))
+
+            data = curr.fetchall()
+            logging.debug(data)
+            curr.close()
+            return data
+
+    else:
+        query_payload = [province]
         query += " WHERE Province = %s"
         if city:
             query += " AND City = %s"
             query_payload.append(city)
         logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
-    else:
-        query += " WHERE PostalCode = %s"
-        query_payload = [postalcode]
-        logging.debug("SELECTING REALTORS IN POLYGON BY POSTALCODE")
-    query += " )"
-    curr.execute(query, tuple(query_payload))
+        query += " )"
+        curr.execute(query, tuple(query_payload))
 
-    data = curr.fetchall()
-    logging.debug(data)
-    curr.close()
-    return data
+        data = curr.fetchall()
+        logging.debug(data)
+        curr.close()
+        return data
+    
+
+    # LEGACY
+
+    # if not postalcode:
+    #     query += " WHERE Province = %s"
+    #     if city:
+    #         query += " AND City = %s"
+    #         query_payload.append(city)
+    #     logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
+    # else:
+    #     query += " WHERE PostalCode = %s"
+    #     query_payload = [postalcode]
+    #     logging.debug("SELECTING REALTORS IN POLYGON BY POSTALCODE")
+    # query += " )"
+    # curr.execute(query, tuple(query_payload))
+
+    # data = curr.fetchall()
+    # logging.debug(data)
+    # curr.close()
+    # return data
 
 
 if __name__ == "__main__":
@@ -192,5 +241,3 @@ if __name__ == "__main__":
     with open("tbl_market_leader_postal_codes.json", "r") as f:
         market_leader_postal_codes = json.load(f)
         add_market_leader_postal_code(market_leader_postal_codes)
-
-    
