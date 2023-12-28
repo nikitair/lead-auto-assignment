@@ -185,7 +185,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             return data
         else:
             logging.debug("1")
-            query.replace(" WHERE PostalCode = %s )", "")
+            query.replace(r" WHERE PostalCode = %s )", "")
             logging.debug(f"2, {query}")
             query_payload = [province]
             logging.debug(f"3, {query_payload}")
