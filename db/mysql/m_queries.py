@@ -185,7 +185,22 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             return data
         else:
             logging.debug("1")
-            query.replace(r" WHERE PostalCode = %s )", "")
+            query = """
+                SELECT DISTINCT
+                    tbl_zipcodes.City AS "City",
+                    CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
+                    tbl_customers.email AS "Email"
+                FROM
+                    tbl_market_leader_postal_codes AS res1
+                LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
+                LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
+                WHERE
+                tbl_zipcodes.id IN (
+                    SELECT
+                        id
+                    FROM
+                        tbl_zipcodes
+                """
             logging.debug(f"2, {query}")
             query_payload = [province]
             logging.debug(f"3, {query_payload}")
