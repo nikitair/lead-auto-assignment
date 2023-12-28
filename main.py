@@ -49,9 +49,6 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
             response["assigned_realtor"] = response["realtor_emails"][randint(
                 0, len(response["realtor_emails"]) - 1)]
             
-        # updating realtor's time of assignment 
-        postgres.add_assigned_realtor(response["assigned_realtor"])
-            
         
     else:
         # searching for realtors in overlapping polygons
@@ -80,9 +77,6 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
                 else:
                     response["assigned_realtor"] = response["realtor_emails"][randint(
                         0, len(response["realtor_emails"]) - 1)]
-                    
-                # updating realtor's time of assignment 
-                postgres.add_assigned_realtor(response["assigned_realtor"])
 
     logging.info(f"RESULT RESPONSE -- {response}")
     return response
