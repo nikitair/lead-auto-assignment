@@ -38,8 +38,20 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
         response["realtor_1"] = 1
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
-        response["assigned_realtor"] = response["realtor_emails"][randint(
-            0, len(response["realtor_emails"]) - 1)]
+
+        # evaluation assigned realtor to the Round-Robin logic
+        assigned_realtor = postgres.get_realtor_to_assign(response["realtor_emails"])
+
+        if len(assigned_realtor) > 0:
+            response["assigned_realtor"] = assigned_realtor[-1][0]
+        else:
+            response["assigned_realtor"] = response["realtor_emails"][randint(
+                0, len(response["realtor_emails"]) - 1)]
+            
+        # updating realtor's time of assignment 
+        postgres.add_assigned_realtor(response["assigned_realtor"])
+            
+        
     else:
         # searching for realtors in overlapping polygons
         realtors_in_polygon = [
@@ -55,15 +67,21 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
             # realtors found in overlapping polygon; returning them
             if len(not_excluded_realtors) > 0:
 
-                #
-                #round-robin logic here
-                #
-
                 response["realtor_1"] = 1
                 for realtor in not_excluded_realtors:
                     response["realtor_emails"].append(realtor)
-                response["assigned_realtor"] = response["realtor_emails"][randint(
-                    0, len(response["realtor_emails"]) - 1)]
+
+                # evaluation assigned realtor to the Round-Robin logic
+                assigned_realtor = postgres.get_realtor_to_assign(response["realtor_emails"])
+
+                if len(assigned_realtor) > 0:
+                    response["assigned_realtor"] = assigned_realtor[-1][0]
+                else:
+                    response["assigned_realtor"] = response["realtor_emails"][randint(
+                        0, len(response["realtor_emails"]) - 1)]
+                    
+                # updating realtor's time of assignment 
+                postgres.add_assigned_realtor(response["assigned_realtor"])
 
     logging.info(f"RESULT RESPONSE -- {response}")
     return response

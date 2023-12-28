@@ -189,25 +189,94 @@ def get_excluded_cities_by_city_province_emails(connector, city, province, email
 
 
 @postgres_connector
-def get_realtor_to_assign(connector, realtor_firstname, realtor_lastname, realtor_email):
+def get_realtor_to_assign(connector, realtor_emails):
     curr = connector.cursor()
     curr.execute(
         """
-        SELECT * FROM statistics.lead_auto_assignment
+        SELECT 
+            realtor_email, 
+            updated_at  
+        FROM 
+            statistics.lead_auto_assignment
         WHERE
-            realtor_firstname = %s
-        AND
-            realtor_lastname = %s
-        AND
-            realtor_email = %s
+            realtor_email IN %s
+        ORDER BY 
+            assign_time ASC
+        LIMIT 1
         """,
-        (realtor_firstname, realtor_lastname, realtor_email)
+        (tuple(realtor_emails),)
     )
     logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
     data = curr.fetchall()
     logging.debug(data)
     curr.close()
     return data
+
+
+@postgres_connector
+def get_realtor_to_assign(connector, realtor_emails):
+    curr = connector.cursor()
+    curr.execute(
+        """
+        SELECT 
+            realtor_email, 
+            updated_at  
+        FROM 
+            statistics.lead_auto_assignment
+        WHERE
+            realtor_email IN %s
+        ORDER BY 
+            updated_at ASC
+        LIMIT 1
+        """,
+        (tuple(realtor_emails),)
+    )
+    logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
+    data = curr.fetchall()
+    logging.debug(data)
+    curr.close()
+    return data
+
+
+@postgres_connector
+def add_assigned_realtor(connector, realtor_email):
+    curr = connector.cursor()
+    curr.execute(
+        """
+            SELECT 
+                * 
+            FROM statistics.lead_auto_assignment
+            WHERE
+                realtor_email = %s;
+            """,
+        (realtor_email)
+    )
+    data = curr.fetchall()
+    if len(data) > 0:
+        curr.execute(
+            """
+            UPDATE TABLE 
+                statistics.lead_auto_assignment
+            SET
+                assign_time = NOW()
+            WHERE
+                realtor_email = %s
+            """,
+            (realtor_email)
+        )
+    else:
+        curr.execute(
+            """
+                INSERT INTO statistics.lead_auto_assignment 
+                        (realtor_email, assign_time)
+                    VALUES
+                        ( %s, NOW());
+                """,
+            (realtor_email)
+        )
+    connector.commit()
+    logging.debug("INSERTED TO statistics.lead_auto_assignment")
+    connector.commit()
 
 
 if __name__ == "__main__":
