@@ -218,16 +218,23 @@ def get_realtor_to_assign(connector, realtor_emails):
     curr = connector.cursor()
     curr.execute(
         """
-        SELECT 
-            realtor_email, 
-            updated_at  
-        FROM 
-            statistics.lead_auto_assignment
-        WHERE
-            realtor_email IN %s
-        ORDER BY 
-            updated_at ASC
-        LIMIT 1
+        SELECT
+        realtor_email,
+        latest_assignment_time
+        FROM (
+            SELECT
+                realtor_email,
+                MAX(updated_at) AS latest_assignment_time
+            FROM
+                statistics.lead_auto_assignment
+            WHERE
+                realtor_email IN %s
+            GROUP BY
+                realtor_email
+        ) AS LatestAssignments
+        ORDER BY
+            latest_assignment_time DESC
+        LIMIT 1;
         """,
         (tuple(realtor_emails),)
     )
