@@ -14,7 +14,7 @@ def index():
     """
     echo endpoint for server health check 
     """
-    logging.info(f"INDEX ENDPOINT TRIGGERED -- {request.method}")
+    logging.info(f"{index.__name__} -- INDEX ENDPOINT TRIGGERED -- {request.method}")
     return jsonify({"status": "success", "message": "Hello World!"}), 200
 
 
@@ -25,7 +25,7 @@ def lead_auto_assignment():
     """
     # receiving lead payload
     payload = request.get_json()
-    logging.info(f"PAYLOAD RECEIVED -- {pprint.pformat(payload)}\n")
+    logging.info(f"{lead_auto_assignment.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
 
     # extracting useful information from the payload
     postalcode = payload.get("listing_zip") if payload.get(
@@ -39,15 +39,17 @@ def lead_auto_assignment():
     buyer_province = payload.get("buyer_province") if payload.get(
         "buyer_province") != "N/A" else ""
 
-    logging.info(f"POSTALCODE IN PAYLOAD -- {postalcode}")
-    logging.info(f"LISTING IN PAYLOAD -- {listing_province}")
-    logging.info(f"LISTING IN PAYLOAD -- {listing_city}")
-    logging.info(f"BUYER IN PAYLOAD -- {buyer_province}")
-    logging.info(f"BUYER CITY IN PAYLOAD -- {buyer_city}")
+    logging.info(f"{lead_auto_assignment.__name__} -- POSTALCODE AFTER N/A FORMATTING -- {postalcode}")
+    logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_province}")
+    logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_city}")
+    logging.info(f"{lead_auto_assignment.__name__} -- BUYER AFTER N/A FORMATTING -- {buyer_province}")
+    logging.info(f"{lead_auto_assignment.__name__} -- BUYER CITY AFTER N/A FORMATTING -- {buyer_city}")
 
     # executing lead auto assignment function; returning result
     result = main(postalcode, listing_province,
                   listing_city, buyer_city, buyer_province)
+    
+    logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
     return jsonify(result), 200
 
 # configuring wsgi

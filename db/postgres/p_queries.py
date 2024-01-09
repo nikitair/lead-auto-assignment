@@ -188,29 +188,29 @@ def get_excluded_cities_by_city_province_emails(connector, city, province, email
     return data
 
 
-@postgres_connector
-def get_realtor_to_assign(connector, realtor_emails):
-    curr = connector.cursor()
-    curr.execute(
-        """
-        SELECT 
-            realtor_email, 
-            updated_at  
-        FROM 
-            statistics.lead_auto_assignment
-        WHERE
-            realtor_email IN %s
-        ORDER BY 
-            assign_time ASC
-        LIMIT 1
-        """,
-        (tuple(realtor_emails),)
-    )
-    logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
-    data = curr.fetchall()
-    logging.debug(data)
-    curr.close()
-    return data
+# @postgres_connector
+# def get_realtor_to_assign(connector, realtor_emails):
+#     curr = connector.cursor()
+#     curr.execute(
+#         """
+#         SELECT 
+#             realtor_email, 
+#             updated_at  
+#         FROM 
+#             statistics.lead_auto_assignment
+#         WHERE
+#             realtor_email IN %s
+#         ORDER BY 
+#             assign_time ASC
+#         LIMIT 1
+#         """,
+#         (tuple(realtor_emails),)
+#     )
+#     logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
+#     data = curr.fetchall()
+#     logging.debug(data)
+#     curr.close()
+#     return data
 
 
 @postgres_connector
@@ -240,7 +240,7 @@ def get_realtor_to_assign(connector, realtor_emails):
     )
     logging.debug("SELECTING DATA FROM statistics.lead_auto_assignment")
     data = curr.fetchall()
-    logging.info(f"ASSIGNED REALTOR {data}")
+    logging.info(f"{get_realtor_to_assign} -- ASSIGNED REALTOR {data}")
     curr.close()
     return data
 
@@ -283,7 +283,7 @@ def add_assigned_realtor(connector, realtor_email):
         )
     connector.commit()
     logging.debug("INSERTED TO statistics.lead_auto_assignment")
-    logging.info(f"UPDATED TIME OF ASSIGNMENT FOR {realtor_email}")
+    logging.info(f"{add_assigned_realtor} -- UPDATED TIME OF ASSIGNMENT FOR {realtor_email}")
     connector.commit()
 
 

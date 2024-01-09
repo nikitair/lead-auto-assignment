@@ -201,25 +201,17 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
                     FROM
                         tbl_zipcodes
                 """
-            logging.debug(f"2, {query}")
             query_payload = [province]
-            logging.debug(f"3, {query_payload}")
             query += " WHERE Province = %s"
-            logging.debug(f"4, {query}")
             if city:
                 query += " AND City = %s"
-                logging.debug(f"4.1, {query}")
                 query_payload.append(city)
-                logging.debug(f"4.2, {query_payload}")
-            logging.debug("5")
             logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
             query += " )"
-            logging.debug(f"6, {query}")
-            logging.debug(f"{query_payload}")
             curr.execute(query, tuple(query_payload))
 
             data = curr.fetchall()
-            logging.debug(data)
+            logging.debug(f"{get_realtors_in_polygon} -- {data}")
             curr.close()
             return data
 
