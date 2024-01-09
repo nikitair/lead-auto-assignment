@@ -224,7 +224,7 @@ def get_realtor_to_assign(connector, realtor_emails):
         FROM (
             SELECT
                 realtor_email,
-                MAX(updated_at) AS latest_assignment_time
+                MAX(assign_time) AS latest_assignment_time
             FROM
                 statistics.lead_auto_assignment
             WHERE
