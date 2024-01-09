@@ -219,21 +219,21 @@ def get_realtor_to_assign(connector, realtor_emails):
     curr.execute(
         """
         SELECT
-        realtor_email,
-        latest_assignment_time
+        email,
+        latest_time
         FROM (
             SELECT
-                realtor_email,
-                MAX(assign_time) AS latest_assignment_time
+                realtor_email AS email,
+                MAX(assign_time) AS latest_time
             FROM
                 statistics.lead_auto_assignment
             WHERE
                 realtor_email IN %s
             GROUP BY
                 realtor_email
-        ) AS LatestAssignments
+        ) AS res
         ORDER BY
-            latest_assignment_time DESC
+            latest_time ASC
         LIMIT 1;
         """,
         (tuple(realtor_emails),)
