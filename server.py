@@ -68,7 +68,7 @@ def round_robin():
     else:
         logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
         realtors = payload.get("realtors")
-        return jsonify(get_realtor_by_round_robin(realtors))
+        return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors)}), 200
 
 
 # configuring wsgi

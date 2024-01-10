@@ -2,7 +2,7 @@ import json
 from random import randint
 import pretty_errors
 from logging_config import logger as  logging
-from utils import prepare_postalcode, get_not_excluded_realtors
+from utils import prepare_postalcode, get_not_excluded_realtors, get_realtor_by_round_robin
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
@@ -36,16 +36,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
 
-        # evaluation assigned realtor to the Round-Robin logic
-        assigned_realtor = postgres.get_realtor_to_assign(response["realtor_emails"])
-        logging.info(f"{main.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
-
-        if len(assigned_realtor) > 0:
-            response["assigned_realtor"] = assigned_realtor[-1][0]
-        else:
-            # if no round-robin assigner realtor -> evaluation randomly
-            response["assigned_realtor"] = response["realtor_emails"][randint(
-                0, len(response["realtor_emails"]) - 1)]
+        # evaluation assigned realtor by the Round-Robin logic
+        response["assigned_realtor"] = get_realtor_by_round_robin(response["realtor_emails"])
     
     # nobody found in additional cities
     else:
@@ -67,15 +59,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
                 for realtor in not_excluded_realtors:
                     response["realtor_emails"].append(realtor)
 
-                # evaluation assigned realtor to the Round-Robin logic
-                assigned_realtor = postgres.get_realtor_to_assign(response["realtor_emails"])
-                logging.info(f"{main.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
-
-                if len(assigned_realtor) > 0:
-                    response["assigned_realtor"] = assigned_realtor[-1][0]
-                else:
-                    response["assigned_realtor"] = response["realtor_emails"][randint(
-                        0, len(response["realtor_emails"]) - 1)]
+                # evaluation assigned realtor by the Round-Robin logic
+                response["assigned_realtor"] = get_realtor_by_round_robin(response["realtor_emails"])
 
     return response
 
