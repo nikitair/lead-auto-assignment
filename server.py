@@ -60,11 +60,14 @@ def round_robin():
     """
     Endpoint to choose a realtor to assign according to the for round-robin logic 
     """
-    payload = request.get_json()
-    logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
-
-    realtors = payload.get("realtors")
-    return jsonify(get_realtor_by_round_robin(realtors))
+    try:
+        payload = request.get_json()
+        logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
+        realtors = payload.get("realtors")
+        return jsonify(get_realtor_by_round_robin(realtors))
+    except Exception as ex:
+        logging.error(f"{round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}\n")
+        return jsonify({"status": "fail", "message": "No payload received"}), 415
 
 
 # configuring wsgi
