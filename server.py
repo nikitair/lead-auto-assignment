@@ -4,6 +4,7 @@ import pprint
 from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
 from main import main
+from utils import get_realtor_by_round_robin
 
 
 app = Flask(__name__)
@@ -51,6 +52,20 @@ def lead_auto_assignment():
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
     return jsonify(result), 200
+
+
+
+@app.route('/round_robin', methods=['GET', 'POST'])
+def round_robin():
+    """
+    Endpoint to choose a realtor to assign according to the for round-robin logic 
+    """
+    payload = request.get_json()
+    logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
+
+    realtors = payload.get("realtors")
+    return jsonify(get_realtor_by_round_robin(realtors))
+
 
 # configuring wsgi
 app = WSGIMiddleware(app)

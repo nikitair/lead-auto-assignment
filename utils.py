@@ -1,4 +1,5 @@
-from logging_config import logger as  logging
+from random import randint
+from logging_config import logger as logging
 import pretty_errors
 from db.postgres import p_queries as postgres
 
@@ -23,11 +24,33 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
     """
     excluded_emails = []
     for email in email_array:
-        excluded_email = postgres.get_excluded_cities_by_city_province_emails(city, province, email)
-        if len(excluded_email) > 0: excluded_emails.append(excluded_email[0][3])
+        excluded_email = postgres.get_excluded_cities_by_city_province_emails(
+            city, province, email)
+        if len(excluded_email) > 0:
+            excluded_emails.append(excluded_email[0][3])
     logging.info(f"EXCLUDED REALTORS -- {excluded_emails}")
-    not_excluded_emails = [email for email in email_array if email not in excluded_emails]
+    not_excluded_emails = [
+        email for email in email_array if email not in excluded_emails]
     return not_excluded_emails
+
+
+def get_realtor_by_round_robin(realtors: list) -> dict:
+    """
+    return realtor to assign according to the round-robin logic
+    """
+    result = {"assigned_realtor": None}
+    if realtors:
+        assigned_realtor = postgres.get_realtor_to_assign(realtors)
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
+
+        if len(assigned_realtor) > 0:
+            result["assigned_realtor"] = assigned_realtor[-1][0]
+        else:
+            result["assigned_realtor"] = realtors[randint(
+                0, len(realtors) - 1)]
+            
+    logging.info(f"{get_realtor_by_round_robin.__name__} -- RESULT -- {result}")
+    return result
 
 
 if __name__ == "__main__":
