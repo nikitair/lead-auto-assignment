@@ -62,16 +62,17 @@ def round_robin():
     """
     try:
         payload = request.get_json()
-        logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
-        realtors = payload.get("realtors")
-        return jsonify(get_realtor_by_round_robin(realtors))
     except Exception as ex:
         logging.error(f"{round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}\n")
         return jsonify({"status": "fail", "message": "No payload received"}), 415
+    else:
+        logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
+        realtors = payload.get("realtors")
+        return jsonify(get_realtor_by_round_robin(realtors))
 
 
 # configuring wsgi
-app = WSGIMiddleware(app)
+# app = WSGIMiddleware(app)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')

@@ -39,11 +39,15 @@ def get_realtor_by_round_robin(realtors: list) -> dict:
     return realtor to assign according to the round-robin logic
     """
     result = {"assigned_realtor": None}
+    assigned_realtor = None
     if realtors:
-        assigned_realtor = postgres.get_realtor_to_assign(realtors)
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
+        try:
+            assigned_realtor = postgres.get_realtor_to_assign(realtors)
+            logging.info(f"{get_realtor_by_round_robin.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
+        except Exception as ex:
+            logging.error(f"{get_realtor_by_round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}")
 
-        if len(assigned_realtor) > 0:
+        if assigned_realtor:
             result["assigned_realtor"] = assigned_realtor[-1][0]
         else:
             result["assigned_realtor"] = realtors[randint(
