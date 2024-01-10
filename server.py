@@ -19,7 +19,7 @@ def index():
     return jsonify({"status": "success", "message": "Hello World!"}), 200
 
 
-@app.route('/lead_auto_assignment', methods=['POST'])
+@app.route('/assign_lead', methods=['POST'])
 def lead_auto_assignment():
     """
     lead auto assignment endpoint
