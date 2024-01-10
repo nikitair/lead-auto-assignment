@@ -63,10 +63,10 @@ def round_robin():
     try:
         payload = request.get_json()
     except Exception as ex:
-        logging.error(f"{round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}\n")
+        logging.error(f"{round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}")
         return jsonify({"status": "fail", "message": "No payload received"}), 415
     else:
-        logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
+        logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}")
         realtors = payload.get("realtors")
         return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors)}), 200
 

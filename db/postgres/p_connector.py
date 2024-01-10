@@ -50,7 +50,7 @@ def postgres_connector(func):
         try:
             return func(conn, *args, **kwargs)
         except Exception as ex:
-            logging.error(f"\n!!! POSTGRES ERROR -- {ex}\n")
+            logging.error(f"!!! POSTGRES ERROR -- {ex}")
         finally:
             conn.close()
             logging.info("POSTGRES DISCONNECTED")
