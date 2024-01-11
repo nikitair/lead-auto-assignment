@@ -2,6 +2,13 @@ from random import randint
 from logging_config import logger as logging
 import pretty_errors
 from db.postgres import p_queries as postgres
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+FUB_API_64 = os.getenv("FUB_API_64")
 
 
 def prepare_postalcode(postalcode: str):
@@ -38,20 +45,47 @@ def get_realtor_by_round_robin(realtors: list) -> dict:
     """
     return realtor to assign according to the round-robin logic
     """
-    result = {"assigned_realtor": None}
-    if realtors:
-        assigned_realtor = postgres.get_realtor_to_assign(realtors)
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
+    assigned_realtor = None
+    if type(realtors) == list and len(realtors) > 0:
+        try:
+            assigned_realtor = postgres.get_realtor_to_assign(realtors)
+            logging.info(
+                f"{get_realtor_by_round_robin.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
+        except Exception as ex:
+            logging.error(
+                f"{get_realtor_by_round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}")
 
-        if len(assigned_realtor) > 0:
-            result["assigned_realtor"] = assigned_realtor[-1][0]
+        if assigned_realtor:
+            assigned_realtor = assigned_realtor[-1][0]
         else:
-            result["assigned_realtor"] = realtors[randint(
+            assigned_realtor = realtors[randint(
                 0, len(realtors) - 1)]
-            
-    logging.info(f"{get_realtor_by_round_robin.__name__} -- RESULT -- {result}")
-    return result
+
+    logging.info(
+        f"{get_realtor_by_round_robin.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
+    return assigned_realtor
+
+
+def get_pond_id(lead_province: str):
+    url = "https://api.followupboss.com/v1/ponds?offset=0&limit=100"
+
+    headers = {
+        "accept": "application/json",
+        "authorization": f"Basic {FUB_API_64}"
+    }
+
+    response = requests.get(url, headers=headers)
+    data = response.json
+    pond_id = 3
+
+    if type(data) == dict and data.get("ponds"):
+        for pond in data.get("ponds"):
+            if f"{lead_province.title()} (Out of Polygon)" == pond["name"]:  
+                pond_id = pond["id"]
+                break
+    logging.info(f"{get_pond_id.__name__} -- POND ID -- {pond_id}")
+    return pond_id
 
 
 if __name__ == "__main__":
-    ...
+    get_pond_id("Manitoba")

@@ -19,7 +19,7 @@ def index():
     return jsonify({"status": "success", "message": "Hello World!"}), 200
 
 
-@app.route('/lead_auto_assignment', methods=['POST'])
+@app.route('/assign_lead', methods=['POST'])
 def lead_auto_assignment():
     """
     lead auto assignment endpoint
@@ -60,15 +60,19 @@ def round_robin():
     """
     Endpoint to choose a realtor to assign according to the for round-robin logic 
     """
-    payload = request.get_json()
-    logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}\n")
-
-    realtors = payload.get("realtors")
-    return jsonify(get_realtor_by_round_robin(realtors))
+    try:
+        payload = request.get_json()
+    except Exception as ex:
+        logging.error(f"{round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}")
+        return jsonify({"status": "fail", "message": "No payload received"}), 415
+    else:
+        logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {pprint.pformat(payload)}")
+        realtors = payload.get("realtors")
+        return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors)}), 200
 
 
 # configuring wsgi
 app = WSGIMiddleware(app)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')
