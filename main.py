@@ -2,7 +2,7 @@ import json
 from random import randint
 import pretty_errors
 from logging_config import logger as  logging
-from utils import prepare_postalcode, get_not_excluded_realtors, get_realtor_by_round_robin
+from utils import prepare_postalcode, get_not_excluded_realtors, get_realtor_by_round_robin, get_pond_id
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
@@ -14,7 +14,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     response = {
         "realtor_1": 0,
         "realtor_emails": [],
-        "assigned_realtor": "willow@fb4s.com"
+        "assigned_realtor": "willow@fb4s.com",
+        "assigned_pond_id": 3
     }
 
     province = listing_province if listing_province not in (None, "") else buyer_province
@@ -62,6 +63,9 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
                 # evaluation assigned realtor by the Round-Robin logic
                 response["assigned_realtor"] = get_realtor_by_round_robin(response["realtor_emails"])
 
+    # evaluating initial Pond of the lead
+    if response["assigned_realtor"] == "willow@fb4s.com": 
+        response["assigned_pond_id"] = get_pond_id(listing_province)
     return response
 
 

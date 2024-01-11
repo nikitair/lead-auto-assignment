@@ -28,4 +28,4 @@ fh.setFormatter(formatter)
 logger.addHandler(fh)
 
 # Test logging
-logger.info("This is a test log message.")
+logger.info("=== LOGGING STARTED ===")
