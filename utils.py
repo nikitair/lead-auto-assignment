@@ -4,6 +4,7 @@ import pretty_errors
 from db.postgres import p_queries as postgres
 import requests
 import os
+import pprint
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -76,7 +77,7 @@ def get_pond_id(lead_province: str):
 
     response = requests.get(url, headers=headers)
     data = response.json()
-    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE -- {data}")
+    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE -- {pprint.pformat(data)}")
     pond_id = 3
 
     if type(data) == dict and data.get("ponds"):
