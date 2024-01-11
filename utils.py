@@ -76,6 +76,7 @@ def get_pond_id(lead_province: str):
 
     response = requests.get(url, headers=headers)
     data = response.json
+    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE -- {data}")
     pond_id = 3
 
     if type(data) == dict and data.get("ponds"):
