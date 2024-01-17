@@ -48,6 +48,13 @@ def get_realtor_by_round_robin(realtors: list) -> dict:
     """
     assigned_realtor = None
     if type(realtors) == list and len(realtors) > 0:
+
+        # PREMIUM realtors
+        if "manoj@movewithmanoj.ca" in realtors:
+            return "manoj@movewithmanoj.ca"
+        elif "manoj@fb4s.com" in realtors:
+            return "manoj@fb4s.com"
+
         try:
             assigned_realtor = postgres.get_realtor_to_assign(realtors)
             logging.info(

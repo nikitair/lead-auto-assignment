@@ -15,7 +15,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
         "realtor_1": 0,
         "realtor_emails": [],
         "assigned_realtor": "willow@fb4s.com",
-        "assigned_pond_id": 3
+        "assigned_pond_id": 31
     }
 
     province = listing_province if listing_province not in (None, "") else buyer_province
@@ -66,6 +66,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     # evaluating initial Pond of the lead
     if response["assigned_realtor"] == "willow@fb4s.com": 
         response["assigned_pond_id"] = get_pond_id(listing_province)
+
     return response
 
 
