@@ -30,16 +30,11 @@ def lead_auto_assignment():
     logging.info(f"{lead_auto_assignment.__name__} -- RAW PAYLOAD -- {payload}")
 
     # extracting useful information from the payload
-    postalcode = payload.get("listing_zip") if payload.get(
-        "listing_zip") != "N/A" else ""
-    listing_province = payload.get("listing_province") if payload.get(
-        "listing_province") != "N/A" else ""
-    listing_city = payload.get("listing_city") if payload.get(
-        "listing_city") != "N/A" else ""
-    buyer_city = payload.get("buyer_city") if payload.get(
-        "buyer_city") != "N/A" else ""
-    buyer_province = payload.get("buyer_province") if payload.get(
-        "buyer_province") != "N/A" else ""
+    postalcode = payload.get("listing_zip") if payload.get("listing_zip") != "N/A" else ""
+    listing_province = payload.get("listing_province") if payload.get("listing_province") != "N/A" else ""
+    listing_city = payload.get("listing_city") if payload.get("listing_city") != "N/A" else ""
+    buyer_city = payload.get("buyer_city") if payload.get("buyer_city") != "N/A" else ""
+    buyer_province = payload.get("buyer_province") if payload.get("buyer_province") != "N/A" else ""
 
     logging.info(f"{lead_auto_assignment.__name__} -- POSTALCODE AFTER N/A FORMATTING -- {postalcode}")
     logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_province}")
