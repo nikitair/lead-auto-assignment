@@ -173,12 +173,12 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
     if postalcode:
         query += " WHERE PostalCode = %s"
         query_payload = [postalcode]
-        logging.debug("SELECTING REALTORS IN POLYGON BY POSTALCODE")
+        logging.info("SELECTING REALTORS IN POLYGON BY POSTALCODE")
         query += " )"
         curr.execute(query, tuple(query_payload))
 
         data = curr.fetchall()
-        logging.debug(data)
+        logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY POSTAL CODE - {data}")
 
         if len(data) > 0:
             curr.close()
@@ -206,12 +206,12 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             if city:
                 query += " AND City = %s"
                 query_payload.append(city)
-            logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
+            logging.info("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
             query += " )"
             curr.execute(query, tuple(query_payload))
 
             data = curr.fetchall()
-            logging.debug(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY POSTAL CODE - {data}")
+            logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY POSTAL CODE - {data}")
             curr.close()
             return data
 
@@ -221,12 +221,12 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         if city:
             query += " AND City = %s"
             query_payload.append(city)
-        logging.debug("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
+        logging.info("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
         query += " )"
         curr.execute(query, tuple(query_payload))
 
         data = curr.fetchall()
-        logging.debug(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
+        logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
         curr.close()
         return data
     
