@@ -26,7 +26,8 @@ def lead_auto_assignment():
     """
     # receiving lead payload
     payload = request.get_json()
-    logging.info(f"\n\n{lead_auto_assignment.__name__} -- RAW PAYLOAD -- {payload}")
+    logging.info(f"\n\n{lead_auto_assignment.__name__} -- LEAD AUTO ASSIGNMENT TRIGGERED")
+    logging.info(f"{lead_auto_assignment.__name__} -- RAW PAYLOAD -- {payload}")
 
     # extracting useful information from the payload
     postalcode = payload.get("listing_zip") if payload.get(
