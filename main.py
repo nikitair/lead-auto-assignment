@@ -25,7 +25,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
     logging.info(f"{main.__name__} -- SEARCH PROVINCE -- {province}")
     logging.info(f"{main.__name__} -- SEARCH CITY -- {city}")
-    logging.info(f"{main.__name__} -- SEARCH POSTAL CODE -- {postgres}")
+    logging.info(f"{main.__name__} -- SEARCH POSTAL CODE -- {postalcode}")
 
     # searching in additional cities
     additional_cities = postgres.get_additional_cities_by_city_province(city=buyer_city, province=province)
