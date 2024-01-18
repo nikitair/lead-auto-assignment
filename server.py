@@ -51,7 +51,7 @@ def lead_auto_assignment():
 
 
 
-@app.route('/round_robin', methods=['GET', 'POST'])
+@app.route('/round_robin', methods=['POST'])
 def round_robin():
     """
     Endpoint to choose a realtor to assign according to the for round-robin logic 
