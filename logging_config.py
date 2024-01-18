@@ -17,13 +17,13 @@ formatter = UTCFormatter('%(asctime)s - %(levelname)s - %(message)s')
 
 # Terminal output
 th = logging.StreamHandler()
-th.setLevel(logging.INFO)
+th.setLevel(logging.DEBUG)
 th.setFormatter(formatter)
 logger.addHandler(th)
 
 # File output
 fh = logging.FileHandler('logs.log')
-fh.setLevel(logging.INFO)
+fh.setLevel(logging.DEBUG)
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
