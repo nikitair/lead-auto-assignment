@@ -43,14 +43,12 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     # nobody found in additional cities
     else:
         # searching for realtors in overlapping polygons
-        realtors_in_polygon = [
-            realtor[2] for realtor in mysql.get_realtors_in_polygon(city, province, postalcode)]
+        realtors_in_polygon = [realtor[2] for realtor in mysql.get_realtors_in_polygon(city, province, postalcode)]
         logging.info(f"{main.__name__} -- FOUND REALTORS IN POLYGON -- {realtors_in_polygon}")
 
         if len(realtors_in_polygon) > 0:
             # searching for realtors who's city is NOT excluded
-            not_excluded_realtors = get_not_excluded_realtors(
-                buyer_city, province, realtors_in_polygon)
+            not_excluded_realtors = get_not_excluded_realtors(buyer_city, province, realtors_in_polygon)
             logging.info(f"{main.__name__} -- NOT EXCLUDED REALTORS -- {not_excluded_realtors}")
 
             # realtors found in overlapping polygon; returning them

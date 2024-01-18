@@ -211,7 +211,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             curr.execute(query, tuple(query_payload))
 
             data = curr.fetchall()
-            logging.debug(f"{get_realtors_in_polygon.__name__} -- {data}")
+            logging.debug(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY POSTAL CODE - {data}")
             curr.close()
             return data
 
@@ -226,7 +226,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         curr.execute(query, tuple(query_payload))
 
         data = curr.fetchall()
-        logging.debug(data)
+        logging.debug(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
         curr.close()
         return data
     
