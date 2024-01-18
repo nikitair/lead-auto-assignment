@@ -206,12 +206,12 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             if city:
                 query += " AND City = %s"
                 query_payload.append(city)
-            logging.info("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
+            logging.info("SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
             query += " )"
             curr.execute(query, tuple(query_payload))
 
             data = curr.fetchall()
-            logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY POSTAL CODE - {data}")
+            logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
             curr.close()
             return data
 
@@ -221,7 +221,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         if city:
             query += " AND City = %s"
             query_payload.append(city)
-        logging.info("SELECTING REALTORS IN POLYGON BY CITY - PROVINCE")
+        logging.info("SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
         query += " )"
         curr.execute(query, tuple(query_payload))
 
