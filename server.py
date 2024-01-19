@@ -10,7 +10,7 @@ from utils import get_realtor_by_round_robin
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
+@app.route('/', methods=['GET'])
 def index():
     """
     echo endpoint for server health check 
