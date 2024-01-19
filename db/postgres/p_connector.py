@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
 
+# logging.basicConfig(level=logging.INFO,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
+
 load_dotenv()
 
 SSH_MODE = int(os.getenv("SSH_MODE"))

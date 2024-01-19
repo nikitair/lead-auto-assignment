@@ -2,7 +2,7 @@ from logging_config import logger as logging
 import pretty_errors
 from .p_connector import postgres_connector
 
-# logging.basicConfig(level=logging.DEBUG,
+# logging.basicConfig(level=logging.INFO,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
