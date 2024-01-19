@@ -202,35 +202,34 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
     return data
 
 
+# LEGACY
 # @mysql_connector
 # def get_realtors_in_polygon(connector, city, province, postalcode):
 #     curr = connector.cursor()
-#     query_payload = []
+
+#     query_payload = [province]
+#     query = """
+#         SELECT DISTINCT
+#             tbl_zipcodes.City AS "City",
+#             CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
+#             tbl_customers.email AS "Email"
+#         FROM
+#             tbl_market_leader_postal_codes AS res1
+#         LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
+#         LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
+#         WHERE
+#         tbl_zipcodes.id IN (
+#             SELECT
+#                 id
+#             FROM
+#                 tbl_zipcodes
+#         """
 
 #     if postalcode:
-#         query = """
-#             SELECT DISTINCT
-#                 tbl_zipcodes.City AS "City",
-#                 CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
-#                 tbl_customers.email AS "Email"
-#             FROM
-#                 tbl_market_leader_postal_codes AS res1
-#             LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
-#             LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
-#             WHERE
-#             tbl_zipcodes.id IN (
-#                 SELECT
-#                     id
-#                 FROM
-#                     tbl_zipcodes
-#                 WHERE 
-#                     PostalCode = %s
-#             """
-
+#         query += " WHERE PostalCode = %s"
 #         query_payload = [postalcode]
 #         logging.info("SELECTING REALTORS IN POLYGON BY POSTALCODE")
 #         query += " )"
-#         logging.info(f"QUERY - {query}")
 #         curr.execute(query, tuple(query_payload))
 
 #         data = curr.fetchall()
@@ -240,6 +239,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
 #             curr.close()
 #             return data
 #         else:
+#             logging.debug("1")
 #             query = """
 #                 SELECT DISTINCT
 #                     tbl_zipcodes.City AS "City",
@@ -255,22 +255,35 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
 #                         id
 #                     FROM
 #                         tbl_zipcodes
-#                     WHERE
-#                         City = %s
 #                 """
-#             query_payload = [city]
-#             if province:
-#                 query += " AND Province = %s"
-#                 query_payload.append(province)
+#             query_payload = [province]
+#             query += " WHERE Province = %s"
+#             if city:
+#                 query += " AND City = %s"
+#                 query_payload.append(city)
 #             logging.info("SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
 #             query += " )"
-#             logging.info(f"QUERY - {query}")
 #             curr.execute(query, tuple(query_payload))
 
 #             data = curr.fetchall()
 #             logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
 #             curr.close()
 #             return data
+
+#     else:
+#         query_payload = [province]
+#         query += " WHERE Province = %s"
+#         if city:
+#             query += " AND City = %s"
+#             query_payload.append(city)
+#         logging.info("SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
+#         query += " )"
+#         curr.execute(query, tuple(query_payload))
+
+#         data = curr.fetchall()
+#         logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
+#         curr.close()
+#         return data
 
 
 if __name__ == "__main__":
