@@ -66,12 +66,12 @@ def postgres_connector(func):
 @postgres_connector
 def postgres_demo_query(connector):
     curr = connector.cursor()
-    curr.execute("SELECT * FROM demo")
+    curr.execute("SELECT * FROM statistics.market_leader_polygons")
     data = curr.fetchall()
     curr.close()
-    logging.debug(data)
+    logging.info(data)
     return data
 
 
 if __name__ == "__main__":
-    ...
+    postgres_demo_query()
