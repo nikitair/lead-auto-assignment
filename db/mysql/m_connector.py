@@ -1,7 +1,7 @@
 import os
 import pretty_errors
 from logging_config import logger as logging
-import logging
+# import logging
 from dotenv import load_dotenv
 import mysql.connector
 from sshtunnel import SSHTunnelForwarder
