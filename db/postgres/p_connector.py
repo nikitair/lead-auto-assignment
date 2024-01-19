@@ -39,10 +39,10 @@ def postgres_connector(func):
                 local_bind_address=("localhost", int(LOCAL_PORT))
             )
             server.start()
+            logging.info("POSTGRES SSH TUNNEL STARTED")
 
             conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                     password=POSTGRES_PASSWORD, host="localhost", port=LOCAL_PORT)
-            logging.info("POSTGRES SSH TUNNEL STARTED")
         else:
              conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                     password=POSTGRES_PASSWORD, host=POSTGRES_HOST, port=POSTGRES_PORT)

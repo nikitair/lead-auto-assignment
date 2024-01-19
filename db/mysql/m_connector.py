@@ -38,6 +38,7 @@ def mysql_connector(func):
                 local_bind_address=("localhost", int(LOCAL_PORT))
             )
             server.start()
+            logging.info("MYSQL SSH TUNNEL STARTED")
 
             connection = mysql.connector.connect(
                 host="localhost",
@@ -46,7 +47,6 @@ def mysql_connector(func):
                 password=MYSQL_PASSWORD,
                 database=MYSQL_DB
             )
-            logging.info("MYSQL SSH TUNNEL STARTED")
         else:
             connection = mysql.connector.connect(
                 host=MYSQL_HOST,
