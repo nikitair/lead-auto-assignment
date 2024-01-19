@@ -2,25 +2,55 @@ from logging_config import logger as logging
 import pretty_errors
 import json
 from .m_connector import mysql_connector
+import re
 
 # logging.basicConfig(level=logging.INFO,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')
 
+def is_valid_postal_code(postal_code):
+    """
+    checks is PostalCode is valid
+    """
+    pattern = r"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$"
+    return re.match(pattern, postal_code) is not None
+
 
 @mysql_connector
 def get_realtors_in_polygon(connector, city, province, postalcode):
-    """
-    The major Realtors in Polygons searching function.
+    curr = connector.cursor()
 
-    * Current Logic:
-    1. PostalCode provided -> searching by PostalCode
-    2. Found realtors by PostalCode -> returning found realtors
-    3. NO realtors found by PostalCode -> searching by City + Province (if provided)
+    if postalcode and is_valid_postal_code(postalcode):
 
-    4. If only Province is provided -> NO search executed
-    """
+        query = """
+            SELECT DISTINCT
+                tbl_zipcodes.City AS "City",
+                CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
+                tbl_customers.email AS "Email"
+            FROM
+                tbl_market_leader_postal_codes AS res1
+            LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
+            LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
+            WHERE
+            tbl_zipcodes.id IN (
+                SELECT
+                    id
+                FROM
+                    tbl_zipcodes
+                WHERE 
+                    PostalCode = %s
+                )
+        """
+        
+        logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON BY POSTALCODE")
+        curr.execute(query, (postalcode))
 
-    QUERY = """
+        data = curr.fetchall()
+        logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
+        
+        return data
+    
+    else:
+        query = """
         SELECT DISTINCT
             tbl_zipcodes.City AS "City",
             CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
@@ -30,36 +60,27 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
         LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
         WHERE
-            (
-                tbl_zipcodes.id IN (
-                    SELECT
-                        id
-                    FROM
-                        tbl_zipcodes
-                    WHERE 
-                        PostalCode = %s
-                )
-            OR (
-                tbl_zipcodes.id IN (
-                    SELECT
-                        id
-                    FROM
-                        tbl_zipcodes
-                    WHERE 
-                        City = %s
-                        AND (%s IS NULL OR Province = %s OR Province = "")
-                )
-            )
-    """
-    curr = connector.cursor()
+        tbl_zipcodes.id IN (
+            SELECT
+                id
+            FROM
+                tbl_zipcodes
+            WHERE 
+                City = %s
+        """
+        query_payload = [city]
+        if province:
+            query_payload.append(province)
+            query += " AND Province = %s"
+        query += " )"
+        logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
+        curr.execute(query, (postalcode))
 
-    logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON")
-    curr.execute(QUERY, (postalcode, city, province, province))  # Repeat province for the second %s
+        data = curr.fetchall()
+        logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
+        
+        return data
 
-    data = curr.fetchall()
-    logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
-    
-    return data
 
 
 @mysql_connector
@@ -288,4 +309,4 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
 
 
 if __name__ == "__main__":
-    ...
+    print(is_valid_postal_code("A1A 1A1"))

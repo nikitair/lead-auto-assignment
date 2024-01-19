@@ -1,12 +1,13 @@
 import os
 import pretty_errors
-from logging_config import logger as logging
+# from logging_config import logger as logging
+import logging
 from dotenv import load_dotenv
 import mysql.connector
 from sshtunnel import SSHTunnelForwarder
 
-# logging.basicConfig(level=logging.INFO,
-#                     format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
 
@@ -24,6 +25,9 @@ SSH_SERVER_ADDRESS=os.getenv("SSH_MYSQL_SERVER_ADDRESS")
 SSH_SERVER_PORT = int(os.getenv("SSH_MYSQL_SERVER_PORT"))
 LOCAL_PORT = os.getenv("MYSQL_LOCAL_PORT")
 
+POSTGRES_HOST = os.getenv("POSTGRES_HOST")
+POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+
 
 def mysql_connector(func):
     """
@@ -33,19 +37,29 @@ def mysql_connector(func):
         logging.info(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
         if SSH_MODE == 1:
             # starting SSH tunnelling
+            # server = SSHTunnelForwarder(
+            #     (SSH_SERVER_ADDRESS, SSH_SERVER_PORT),
+            #     ssh_username=SSH_USERNAME,
+            #     ssh_pkey=SSH_PKEY,
+            #     remote_bind_address=(MYSQL_HOST, int(MYSQL_PORT)),
+            #     local_bind_address=("localhost", int(LOCAL_PORT))
+            # )
+            # server.start()
+
             server = SSHTunnelForwarder(
                 (SSH_SERVER_ADDRESS, SSH_SERVER_PORT),
                 ssh_username=SSH_USERNAME,
                 ssh_pkey=SSH_PKEY,
-                remote_bind_address=(MYSQL_HOST, int(MYSQL_PORT)),
+                remote_bind_address=(POSTGRES_HOST, int(POSTGRES_PORT)),
                 local_bind_address=("localhost", int(LOCAL_PORT))
             )
             server.start()
+
             logging.info("MYSQL SSH TUNNEL STARTED")
 
             connection = mysql.connector.connect(
-                host="localhost",
-                port=LOCAL_PORT,
+                host=MYSQL_HOST,
+                # port=LOCAL_PORT,
                 user=MYSQL_USER,
                 password=MYSQL_PASSWORD,
                 database=MYSQL_DB

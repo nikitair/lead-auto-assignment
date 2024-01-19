@@ -23,7 +23,7 @@ def prepare_postalcode(postalcode: str):
                 res = f"{postalcode[0:3]} {postalcode[3:6]}"
             else:
                 res = postalcode
-    return res
+    return res.upper()
 
 
 def get_not_excluded_realtors(city: str, province: str, email_array: list) -> list:
