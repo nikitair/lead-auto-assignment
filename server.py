@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import pretty_errors
 import pprint
 from logging_config import logger as  logging
@@ -16,7 +16,7 @@ def index():
     echo endpoint for server health check 
     """
     logging.info(f"{index.__name__} -- INDEX ENDPOINT TRIGGERED -- {request.method}")
-    return jsonify({"status": "success", "message": "Hello World!"}), 200
+    return render_template('index.html')
 
 
 @app.route('/assign_lead', methods=['POST'])
