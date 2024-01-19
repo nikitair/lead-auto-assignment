@@ -42,7 +42,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
         """
         
         logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON BY POSTALCODE")
-        curr.execute(query, (postalcode))
+        curr.execute(query, (postalcode,))
 
         data = curr.fetchall()
         logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
