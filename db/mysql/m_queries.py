@@ -161,7 +161,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
     4. If only Province is provided -> NO search executed
     """
 
-    query = """
+    QUERY = """
         SELECT DISTINCT
             tbl_zipcodes.City AS "City",
             CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
@@ -194,7 +194,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
     """
 
     logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON")
-    connector.execute(query, (postalcode, city, province, province))  # Repeat province for the second %s
+    connector.execute(QUERY, (postalcode, city, province, province))  # Repeat province for the second %s
 
     data = connector.fetchall()
     logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
