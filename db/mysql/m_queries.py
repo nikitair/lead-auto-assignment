@@ -150,6 +150,17 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
 
 @mysql_connector
 def get_realtors_in_polygon(connector, city, province, postalcode):
+    """
+    The major Realtors in Polygons searching function.
+
+    * Current Logic:
+    1. PostalCode provided -> searching by PostalCode
+    2. Found realtors by PostalCode -> returning found realtors
+    3. NO realtors found by PostalCode -> searching by City + Province (if provided)
+
+    4. If only Province is provided -> NO search executed
+    """
+
     query = """
         SELECT DISTINCT
             tbl_zipcodes.City AS "City",
