@@ -8,6 +8,60 @@ from .m_connector import mysql_connector
 
 
 @mysql_connector
+def get_realtors_in_polygon(connector, city, province, postalcode):
+    """
+    The major Realtors in Polygons searching function.
+
+    * Current Logic:
+    1. PostalCode provided -> searching by PostalCode
+    2. Found realtors by PostalCode -> returning found realtors
+    3. NO realtors found by PostalCode -> searching by City + Province (if provided)
+
+    4. If only Province is provided -> NO search executed
+    """
+
+    QUERY = """
+        SELECT DISTINCT
+            tbl_zipcodes.City AS "City",
+            CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
+            tbl_customers.email AS "Email"
+        FROM
+            tbl_market_leader_postal_codes AS res1
+        LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
+        LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
+        WHERE
+            (
+                tbl_zipcodes.id IN (
+                    SELECT
+                        id
+                    FROM
+                        tbl_zipcodes
+                    WHERE 
+                        PostalCode = %s
+                )
+            OR (
+                tbl_zipcodes.id IN (
+                    SELECT
+                        id
+                    FROM
+                        tbl_zipcodes
+                    WHERE 
+                        City = %s
+                        AND (%s IS NULL OR Province = %s OR Province = "")
+                )
+            )
+    """
+
+    logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON")
+    connector.execute(QUERY, (postalcode, city, province, province))  # Repeat province for the second %s
+
+    data = connector.fetchall()
+    logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
+    
+    return data
+
+
+@mysql_connector
 def create_table_tbl_customers(connector):
     curr = connector.cursor()
     curr.execute(
@@ -146,60 +200,6 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
     logging.debug(
         f"INSERTED TO market_leader_postal_codes {insert_payload[0]}")
     curr.close()
-
-
-@mysql_connector
-def get_realtors_in_polygon(connector, city, province, postalcode):
-    """
-    The major Realtors in Polygons searching function.
-
-    * Current Logic:
-    1. PostalCode provided -> searching by PostalCode
-    2. Found realtors by PostalCode -> returning found realtors
-    3. NO realtors found by PostalCode -> searching by City + Province (if provided)
-
-    4. If only Province is provided -> NO search executed
-    """
-
-    QUERY = """
-        SELECT DISTINCT
-            tbl_zipcodes.City AS "City",
-            CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
-            tbl_customers.email AS "Email"
-        FROM
-            tbl_market_leader_postal_codes AS res1
-        LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
-        LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
-        WHERE
-            (
-                tbl_zipcodes.id IN (
-                    SELECT
-                        id
-                    FROM
-                        tbl_zipcodes
-                    WHERE 
-                        PostalCode = %s
-                )
-            OR (
-                tbl_zipcodes.id IN (
-                    SELECT
-                        id
-                    FROM
-                        tbl_zipcodes
-                    WHERE 
-                        City = %s
-                        AND (%s IS NULL OR Province = %s OR Province = "")
-                )
-            )
-    """
-
-    logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON")
-    connector.execute(QUERY, (postalcode, city, province, province))  # Repeat province for the second %s
-
-    data = connector.fetchall()
-    logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
-    
-    return data
 
 
 # LEGACY
