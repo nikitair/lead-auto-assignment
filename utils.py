@@ -96,5 +96,12 @@ def get_pond_id(lead_province: str):
     return pond_id
 
 
+def assign_lead_by_nationality():
+    """
+    TO BE IMPLEMENTED
+    """
+    ...
+
+
 if __name__ == "__main__":
     get_pond_id("Manitoba")
