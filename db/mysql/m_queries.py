@@ -51,11 +51,12 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
                 )
             )
     """
+    curr = connector.cursor()
 
     logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON")
-    connector.execute(QUERY, (postalcode, city, province, province))  # Repeat province for the second %s
+    curr.execute(QUERY, (postalcode, city, province, province))  # Repeat province for the second %s
 
-    data = connector.fetchall()
+    data = curr.fetchall()
     logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
     
     return data
