@@ -33,8 +33,8 @@ def postgres_connector(func):
                 (SSH_SERVER_ADDRESS, SSH_SERVER_PORT),
                 ssh_username=SSH_USERNAME,
                 ssh_pkey=SSH_PKEY,
-                remote_bind_address=(POSTGRES_HOST, POSTGRES_PORT),
-                local_bind_address=("localhost", LOCAL_PORT)
+                remote_bind_address=(POSTGRES_HOST, int(POSTGRES_PORT)),
+                local_bind_address=("localhost", int(LOCAL_PORT))
             )
             server.start()
             logging.info("POSTGRES SSH TUNNEL STARTED")
