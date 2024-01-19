@@ -7,18 +7,19 @@ from sshtunnel import SSHTunnelForwarder
 
 load_dotenv()
 
+SSH_MODE = int(os.getenv("SSH_MODE"))
+SSH_PKEY = os.getenv("SSH_PKEY")
+
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
-SSH_MODE = int(os.getenv("SSH_MODE"))
-SSH_PKEY = os.getenv("SSH_PKEY")
-SSH_USERNAME = os.getenv("SSH_USERNAME")
-SSH_SERVER_ADDRESS=os.getenv("SSH_SERVER_ADDRESS")
-SSH_SERVER_PORT = int(os.getenv("SSH_SERVER_PORT"))
-LOCAL_PORT = os.getenv("LOCAL_PORT")
+SSH_USERNAME = os.getenv("SSH_POSTGRES_USERNAME")
+SSH_SERVER_ADDRESS=os.getenv("SSH_POSTGRES_SERVER_ADDRESS")
+SSH_SERVER_PORT = int(os.getenv("SSH_POSTGRES_SERVER_PORT"))
+LOCAL_PORT = os.getenv("POSTGRES_LOCAL_PORT")
 
 
 def postgres_connector(func):
