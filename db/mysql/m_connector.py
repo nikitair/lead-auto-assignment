@@ -1,13 +1,13 @@
 import os
 import pretty_errors
-# from logging_config import logger as logging
+from logging_config import logger as logging
 import logging
 from dotenv import load_dotenv
 import mysql.connector
 from sshtunnel import SSHTunnelForwarder
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.INFO,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
 
