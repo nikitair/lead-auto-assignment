@@ -42,7 +42,7 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
     return not_excluded_emails
 
 
-def get_realtor_by_round_robin(realtors: list) -> dict:
+def get_realtor_by_round_robin(realtors: list):
     """
     return realtor to assign according to the round-robin logic
     """
