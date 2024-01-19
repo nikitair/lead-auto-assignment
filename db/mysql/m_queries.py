@@ -74,7 +74,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
             query += " AND Province = %s"
         query += " )"
         logging.info(f"{get_realtors_in_polygon.__name__} -- SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
-        curr.execute(query, (postalcode))
+        curr.execute(query, tuple(query_payload))
 
         data = curr.fetchall()
         logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE - {data}")
