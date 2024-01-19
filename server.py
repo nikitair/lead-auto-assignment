@@ -16,7 +16,8 @@ def index():
     echo endpoint for server health check 
     """
     logging.info(f"{index.__name__} -- INDEX ENDPOINT TRIGGERED -- {request.method}")
-    return render_template('index.html')
+    # return render_template('index.html')
+    return jsonify({"message": "hello world"})
 
 
 @app.route('/assign_lead', methods=['POST'])
