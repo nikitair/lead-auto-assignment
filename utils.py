@@ -53,7 +53,7 @@ def get_realtor_by_round_robin(realtors: list):
         if "manoj@movewithmanoj.ca" in realtors:
             return "manoj@movewithmanoj.ca"
         elif "manoj@fb4s.com" in realtors:
-            return "manoj@fb4s.com"
+            return "manoj@movewithmanoj.ca"
 
         try:
             assigned_realtor = postgres.get_realtor_to_assign(realtors)
