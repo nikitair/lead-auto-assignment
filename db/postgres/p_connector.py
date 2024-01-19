@@ -27,6 +27,7 @@ def postgres_connector(func):
     decorator that connects to Postgres DB and executes inputted query handler; handles exceptions
     """
     def inner(*args, **kwargs):
+        logging.info(f"CONNECTING TO POSTGRES WITH SSH MODE {SSH_MODE}")
 
         if SSH_MODE == 1:
             # starting SSH tunnel
@@ -38,16 +39,15 @@ def postgres_connector(func):
                 local_bind_address=("localhost", int(LOCAL_PORT))
             )
             server.start()
-            logging.info("POSTGRES SSH TUNNEL STARTED")
 
             conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                     password=POSTGRES_PASSWORD, host="localhost", port=LOCAL_PORT)
+            logging.info("POSTGRES SSH TUNNEL STARTED")
         else:
              conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
-                                    password=POSTGRES_PASSWORD, host=POSTGRES_HOST, port=POSTGRES_PORT)   
+                                    password=POSTGRES_PASSWORD, host=POSTGRES_HOST, port=POSTGRES_PORT)
         
-
-        logging.info(f"POSTGRES CONNECTED WITH SSH MODE {SSH_MODE}")
+        logging.info(f"CONNECTED TO POSTGRES")
         try:
             return func(conn, *args, **kwargs)
         except Exception as ex:

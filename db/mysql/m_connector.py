@@ -27,7 +27,7 @@ def mysql_connector(func):
     decorator that connects to MySQL DB and executes inputted query handler; handles exceptions
     """
     def inner(*args, **kwargs):
-
+        logging.info(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
         if SSH_MODE == 1:
             # starting SSH tunnelling
             server = SSHTunnelForwarder(
@@ -37,7 +37,7 @@ def mysql_connector(func):
                 remote_bind_address=(MYSQL_HOST, int(MYSQL_PORT)),
                 local_bind_address=("localhost", int(LOCAL_PORT))
             )
-            logging.info("MYSQL SSH TUNNEL STARTED")
+            server.start()
 
             connection = mysql.connector.connect(
                 host="localhost",
@@ -46,6 +46,7 @@ def mysql_connector(func):
                 password=MYSQL_PASSWORD,
                 database=MYSQL_DB
             )
+            logging.info("MYSQL SSH TUNNEL STARTED")
         else:
             connection = mysql.connector.connect(
                 host=MYSQL_HOST,
@@ -64,7 +65,6 @@ def mysql_connector(func):
             if SSH_MODE == 1:
                 server.stop()
                 logging.info("MYSQL SSH TUNNEL DISCONNECTED")
-
     return inner
 
 
@@ -72,7 +72,7 @@ def mysql_connector(func):
 @mysql_connector
 def mysql_demo_query(connector):
     curr = connector.cursor()
-    curr.execute("SELECT * FROM main.demo")
+    curr.execute("SELECT * FROM tbl_customers LIMIT 1")
     data = curr.fetchall()
     curr.close()
     logging.debug(data)
@@ -80,4 +80,4 @@ def mysql_demo_query(connector):
 
 
 if __name__ == "__main__":
-    ...
+    mysql_demo_query()
