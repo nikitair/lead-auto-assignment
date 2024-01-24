@@ -238,7 +238,7 @@ def get_buyer_name(connector, buyer_email: str):
                 email = %s
             LIMIT 1
         """,
-        tuple(buyer_email)
+        (buyer_email,)
     )
 
     data = curr.fetchall()
