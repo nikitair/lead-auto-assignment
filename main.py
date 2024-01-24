@@ -7,7 +7,7 @@ from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
 
-def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str) -> dict:
+def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str) -> dict:
     """
     the main function that executes full lead auto assignment cycle
     """
@@ -22,6 +22,9 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     city = listing_city if listing_city not in (None, "") else buyer_city
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)
+
+    buyer_name = mysql.get_buyer_name(buyer_email=buyer_email)
+    logging.info(f"{main.__name__} -- BUYER NAME -- {buyer_name}")
 
     logging.info(f"{main.__name__} -- SEARCH PROVINCE -- {province}")
     logging.info(f"{main.__name__} -- SEARCH CITY -- {city}")

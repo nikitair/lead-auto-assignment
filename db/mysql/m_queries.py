@@ -224,88 +224,28 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
     curr.close()
 
 
-# LEGACY
-# @mysql_connector
-# def get_realtors_in_polygon(connector, city, province, postalcode):
-#     curr = connector.cursor()
+@mysql_connector
+def get_buyer_name(connector, buyer_email: str):
+    logging.info(f"{get_buyer_name.__name__} -- SELECTING DATA IN tbl_contacts")
+    curr = connector.cursor()
+    curr.execute(
+        """
+            SELECT
+                first_name
+            FROM
+                tbl_contacts
+            WHERE
+                email = %s
+            LIMIT 1
+        """,
+        tuple(buyer_email)
+    )
 
-#     query_payload = [province]
-#     query = """
-#         SELECT DISTINCT
-#             tbl_zipcodes.City AS "City",
-#             CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
-#             tbl_customers.email AS "Email"
-#         FROM
-#             tbl_market_leader_postal_codes AS res1
-#         LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
-#         LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
-#         WHERE
-#         tbl_zipcodes.id IN (
-#             SELECT
-#                 id
-#             FROM
-#                 tbl_zipcodes
-#         """
+    data = curr.fetchall()
+    logging.info(f"{get_buyer_name.__name__} -- SQL RESPONSE - {data}")
+    curr.close()
 
-#     if postalcode:
-#         query += " WHERE PostalCode = %s"
-#         query_payload = [postalcode]
-#         logging.info("SELECTING REALTORS IN POLYGON BY POSTALCODE")
-#         query += " )"
-#         curr.execute(query, tuple(query_payload))
-
-#         data = curr.fetchall()
-#         logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY POSTAL CODE - {data}")
-
-#         if len(data) > 0:
-#             curr.close()
-#             return data
-#         else:
-#             logging.debug("1")
-#             query = """
-#                 SELECT DISTINCT
-#                     tbl_zipcodes.City AS "City",
-#                     CONCAT(tbl_customers.firstname, ' ', tbl_customers.lastname) AS `Name`,
-#                     tbl_customers.email AS "Email"
-#                 FROM
-#                     tbl_market_leader_postal_codes AS res1
-#                 LEFT JOIN tbl_zipcodes ON res1.postal_code_id = tbl_zipcodes.id
-#                 LEFT JOIN tbl_customers ON res1.customer_id = tbl_customers.id
-#                 WHERE
-#                 tbl_zipcodes.id IN (
-#                     SELECT
-#                         id
-#                     FROM
-#                         tbl_zipcodes
-#                 """
-#             query_payload = [province]
-#             query += " WHERE Province = %s"
-#             if city:
-#                 query += " AND City = %s"
-#                 query_payload.append(city)
-#             logging.info("SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
-#             query += " )"
-#             curr.execute(query, tuple(query_payload))
-
-#             data = curr.fetchall()
-#             logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
-#             curr.close()
-#             return data
-
-#     else:
-#         query_payload = [province]
-#         query += " WHERE Province = %s"
-#         if city:
-#             query += " AND City = %s"
-#             query_payload.append(city)
-#         logging.info("SELECTING REALTORS IN POLYGON BY CITY/PROVINCE")
-#         query += " )"
-#         curr.execute(query, tuple(query_payload))
-
-#         data = curr.fetchall()
-#         logging.info(f"{get_realtors_in_polygon.__name__} -- SQL RESPONSE BY CITY/PROVINCE - {data}")
-#         curr.close()
-#         return data
+    return data[-1][-1]
 
 
 if __name__ == "__main__":

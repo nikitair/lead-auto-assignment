@@ -37,15 +37,18 @@ def lead_auto_assignment():
     buyer_city = payload.get("buyer_city") if payload.get("buyer_city") != "N/A" else ""
     buyer_province = payload.get("buyer_province") if payload.get("buyer_province") != "N/A" else ""
 
+    buyer_email = payload.get("buyer_email") if payload.get("buyer_email") != "N/A" else ""
+
     logging.info(f"{lead_auto_assignment.__name__} -- POSTALCODE AFTER N/A FORMATTING -- {postalcode}")
     logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_province}")
     logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_city}")
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER AFTER N/A FORMATTING -- {buyer_province}")
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER CITY AFTER N/A FORMATTING -- {buyer_city}")
+    logging.info(f"{lead_auto_assignment.__name__} -- BUYER EMAIL AFTER N/A FORMATTING -- {buyer_email}")
 
     # executing lead auto assignment function; returning result
     result = main(postalcode, listing_province,
-                  listing_city, buyer_city, buyer_province)
+                  listing_city, buyer_city, buyer_province, buyer_email)
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
     return jsonify(result), 200

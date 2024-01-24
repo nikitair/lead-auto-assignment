@@ -42,7 +42,33 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
     return not_excluded_emails
 
 
-def get_realtor_by_round_robin(realtors: list):
+def get_nationality(name: str):
+
+    logging.info(f"{get_nationality} -- EVALUATING BUYER NATIONALITY")
+
+    response = requests.get(
+        f"https://api.nationalize.io/?name={name}"
+    )
+
+    status = response.status_code
+    data = response.json()
+
+
+    if status == 200 and type(data.get("country")) == list and len(data["country"]) > 0:
+        nationality_array = [country["country_id"] for country in data["country"]]
+
+    logging.info(f"{get_nationality} -- NATIONALITY API RESPONSE - {data}")
+    
+    if "IN" in nationality_array:
+        return "IN"
+    elif "CN" in nationality_array:
+        return "CN"
+    else:
+        return None
+
+
+
+def get_realtor_by_round_robin(realtors: list, buyer_name: str):
     """
     return realtor to assign according to the round-robin logic
     """
@@ -51,9 +77,19 @@ def get_realtor_by_round_robin(realtors: list):
 
         # PREMIUM realtors
         if "manoj@movewithmanoj.ca" in realtors:
-            return "manoj@movewithmanoj.ca"
+            return "manoj@fb4s.com"
         elif "manoj@fb4s.com" in realtors:
-            return "manoj@movewithmanoj.ca"
+            return "manoj@fb4s.com"
+        
+        realtors_nation_dict = {
+            "CH": "jack@fb4s.com",
+            "IN": "harman@fb4s.com"
+        }
+        
+        buyer_nationality = get_nationality(buyer_name)
+        
+        if get_nationality(buyer_name) and ("jack@fb4s.com" in realtors or "harman@fb4s.com" in realtors):
+            return realtors_nation_dict[buyer_nationality]
 
         try:
             assigned_realtor = postgres.get_realtor_to_assign(realtors)
@@ -96,12 +132,7 @@ def get_pond_id(lead_province: str):
     return pond_id
 
 
-def assign_lead_by_nationality():
-    """
-    TO BE IMPLEMENTED
-    """
-    ...
-
 
 if __name__ == "__main__":
-    get_pond_id("Manitoba")
+    # get_pond_id("Manitoba")
+    pprint.pprint(get_nationality("John"))
