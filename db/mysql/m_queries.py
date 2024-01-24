@@ -226,14 +226,14 @@ def add_market_leader_postal_code(connector, insert_payload: tuple):
 
 @mysql_connector
 def get_buyer_name(connector, buyer_email: str):
-    logging.info(f"{get_buyer_name.__name__} -- SELECTING DATA IN tbl_contacts")
+    logging.info(f"{get_buyer_name.__name__} -- SELECTING DATA IN tbl_customers")
     curr = connector.cursor()
     curr.execute(
         """
             SELECT
-                first_name
+                firstname
             FROM
-                tbl_contacts
+                tbl_customers
             WHERE
                 email = %s
             LIMIT 1
