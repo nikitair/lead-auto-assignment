@@ -30,6 +30,16 @@ def not_found(e):
   return render_template('404.html'), 404
 
 
+@app.errorhandler(405)
+def not_found(e):
+  return jsonify(
+      {
+            "error": "Method is NOT allowed",
+            "success": False  
+        }
+  ), 405
+
+
 @app.route('/assign_lead', methods=['POST'])
 def lead_auto_assignment():
     """
