@@ -47,8 +47,8 @@ def get_nationality(name: str, search_nations):
 
     logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY")
 
-    print("#" + name)
-    print("#" + search_nations)
+    print("# name" + name)
+    print("# search_nations" + search_nations)
 
     if not name or len(search_nations) < 1:
         return None
@@ -92,11 +92,13 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         logging.info(f"{get_realtor_to_assign.__name__} -- 2. NATIONALITY EVALUATION")
         
         realtors_nationalities = mysql.get_realtors_nationality(realtors)
-        print("*" + realtors_nationalities)
+        print("* realtors_nationalities" + realtors_nationalities)
 
+        search_nationalities = [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]]
+        print("* search_nationalities" + search_nationalities)
 
         buyer_nationality = get_nationality(buyer_name, [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]])
-        print("*" + buyer_nationality)
+        print("* buyer_nationality" + buyer_nationality)
 
         national_realtors = [list(realtor.keys())[0] for realtor in realtors_nationalities if list(realtor.values())[0] == buyer_nationality]
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONAL EVALUATIONS - {national_realtors}")
