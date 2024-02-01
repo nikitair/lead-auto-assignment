@@ -1,7 +1,7 @@
 from logging_config import logger as logging
 import pretty_errors
 import json
-from m_connector import mysql_connector
+from .m_connector import mysql_connector
 import re
 
 # logging.basicConfig(level=logging.INFO,
@@ -285,6 +285,50 @@ def get_top_priority_realtors(connector, realtors: list):
     # prepare_result
     if data:
         result = [item[0] for item in data]
+    else:
+        result = realtors
+    return result
+
+
+@mysql_connector
+def get_realtors_nationality(connector, realtors: list):
+    logging.info(f"{get_realtors_nationality.__name__} -- SELECTING DATA IN tbl_customers")
+
+    result = [{item: None} for item in realtors]
+
+    if not realtors:
+        return result
+    
+    query = """
+            SELECT
+                email,
+                team_member_preferred_nationalities as nationality
+            FROM
+                tbl_customers
+            WHERE 
+                email IN %s
+            OR
+                email IN %s
+            ORDER BY
+                id DESC
+        """
+    curr = connector.cursor()
+    curr.execute(query, (realtors, realtors))
+    data = curr.fetchall()
+    logging.info(f"{get_realtors_nationality.__name__} -- SQL RESPONSE - {data}")
+
+    if data:
+
+        nationality_descriptor = {
+            "indian": "IN",
+            "chinese": "CN"
+        }
+
+        result = []
+
+        for item in data:
+            result.append({item[0]: nationality_descriptor.get(item[1])})
+
     return result
 
 
@@ -297,7 +341,14 @@ if __name__ == "__main__":
     # print(get_buyer_name("test.com"))
     # print(get_realtors_in_polygon("Toronto", "Ontario", "A1A 1A1"))
 
-    print(get_top_priority_realtors(['jack@fb4s.com', 'drew@fb4s.com', 'omgil12@yahoo.com']))
-    print(get_top_priority_realtors(['jack@fb4s.com']))
-    print(get_top_priority_realtors(['a']))
-    print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))
+    # print(get_top_priority_realtors(['jack@fb4s.com', 'drew@fb4s.com', 'omgil12@yahoo.com']))
+    # print(get_top_priority_realtors(['jack@fb4s.com']))
+    # print(get_top_priority_realtors(['a']))
+    # print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))
+    # print(get_top_priority_realtors(['soraia@fb4s.com', 'jack@fb4s.com']))
+    # print(get_top_priority_realtors(['duncan@fb4s.com']))
+    # print(get_top_priority_realtors(['duncan@fb4s.com', 'nikita@fb4s.com']))
+    # print(get_top_priority_realtors(['soraia@fb4s.com', 'Manoj@MoveWithManoj.ca', 'manoj@fb4s.com']))
+    # print(get_top_priority_realtors(['Manoj@MoveWithManoj.ca', 'manoj@fb4s.com']))
+
+    print(get_realtors_nationality(realtors=['jack@fb4s.com', 'harman@fb4s.com', 'manoj@fb4s.com']))

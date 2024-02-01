@@ -43,11 +43,11 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
     return not_excluded_emails
 
 
-def get_nationality(name: str):
+def get_nationality(name: str, search_nations):
 
     logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY")
 
-    if not name:
+    if not name or len(search_nations) < 1:
         return None
 
     response = requests.get(
@@ -63,13 +63,11 @@ def get_nationality(name: str):
 
     logging.info(f"{get_nationality.__name__} -- NATIONALITY API RESPONSE - {data}")
     
-    if "IN" in nationality_array:
-        return "IN"
-    elif "CN" in nationality_array:
-        return "CN"
-    else:
-        return None
-
+    for nation in nationality_array:
+        if nation in search_nations:
+            return nation
+        
+    return None
 
 
 def get_realtor_by_round_robin(realtors: list, buyer_name: str):
@@ -79,26 +77,34 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
     assigned_realtor = None
     if type(realtors) == list and len(realtors) > 0:
 
+        # 1. Evaluating top priority realtors (exit point)
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- 1. TOP PRIORITY EVALUATION")
+        realtors = mysql.get_top_priority_realtors(realtors)
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
 
-        # 1. Evaluating top priority realtors
-        top_priority_realtors = mysql.get_top_priority_realtors(realtors)
+        if len(realtors) == 1:
+            return realtors[0]
+        
+        # 2. Nationality evaluation (exit point)
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- 2. NATIONALITY EVALUATION")
+        
+        realtors_nationalities = mysql.get_realtors_nationality(realtors)
+        buyer_nationality = get_nationality(buyer_name, [nation for nation in realtors_nationalities.values() if nation])
 
-        # PREMIUM realtors
-        if "manoj@movewithmanoj.ca" in realtors:
-            return "manoj@fb4s.com"
-        elif "manoj@fb4s.com" in realtors:
-            return "manoj@fb4s.com"
-        
-        realtors_nation_dict = {
-            "CH": "jack@fb4s.com",
-            "IN": "harman@fb4s.com"
-        }
-        
-        buyer_nationality = get_nationality(buyer_name)
-        
-        if buyer_nationality and ("jack@fb4s.com" in realtors or "harman@fb4s.com" in realtors):
-            return realtors_nation_dict[buyer_nationality]
+        national_realtors = [realtor.keys()[0] for realtor in realtors_nationalities if realtor.values()[0] == buyer_nationality]
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- REALTORS BY NATIONAL EVALUATIONS - {national_realtors}")
 
+        if len(national_realtors) > 0:
+            realtors = national_realtors
+
+
+        # 3. Category evaluation
+        # to be implemented
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- 3. CATEGORY EVALUATION")
+
+
+        # 4. Round Robin
+        logging.info(f"{get_realtor_by_round_robin.__name__} -- 4. ROUND ROBIN EVALUATION")
         try:
             assigned_realtor = postgres.get_realtor_to_assign(realtors)
             logging.info(
@@ -110,8 +116,7 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
         if assigned_realtor:
             assigned_realtor = assigned_realtor[-1][0]
         else:
-            assigned_realtor = realtors[randint(
-                0, len(realtors) - 1)]
+            assigned_realtor = realtors[randint(0, len(realtors) - 1)]
 
     logging.info(
         f"{get_realtor_by_round_robin.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
@@ -130,6 +135,7 @@ def get_pond_id(lead_province: str):
     }
 
     response = requests.get(url, headers=headers)
+
     logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE STATUS -- {response.status_code}")
 
     try:
@@ -152,5 +158,6 @@ def get_pond_id(lead_province: str):
 
 
 if __name__ == "__main__":
-    get_pond_id("Manitoba")
+    # get_pond_id("Manitoba")
     # pprint.pprint(get_nationality(None))
+    print(get_nationality("Nikita"))

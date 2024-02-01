@@ -22,7 +22,7 @@ th.setFormatter(formatter)
 logger.addHandler(th)
 
 # File output
-fh = logging.FileHandler('logs.log')
+fh = logging.FileHandler('../logs.log')
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(formatter)
 logger.addHandler(fh)
