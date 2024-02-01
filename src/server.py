@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pretty_errors
 from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
-from main import main
+from main import lead_auto_assignment_main
 from utils import get_realtor_to_assign
 import os
 from dotenv import load_dotenv
@@ -50,13 +50,18 @@ def lead_auto_assignment():
         payload = request.get_json()
         logging.info(f"{lead_auto_assignment.__name__} -- RAW PAYLOAD -- {payload}")
 
-        postalcode = payload["listing_zip"]
-        listing_province = payload["listing_province"]
-        listing_city = payload["listing_city"]
+        postalcode = payload.get("listing_zip")
+        listing_province = payload.get("listing_province")
+        listing_city = payload.get("listing_city")
+
         buyer_city = payload["buyer_city"]
         buyer_province = payload["buyer_province"]
         buyer_email = payload["buyer_email"]
         buyer_name = payload["buyer_name"]
+
+        cold_lead = payload.get("cold_lead")
+        if cold_lead:
+            logging.info(f"{lead_auto_assignment.__name__} -- COLD LEAD")
 
     except Exception as ex:
         logging.error(f"{lead_auto_assignment.__name__} -- !!! ERROR OCCURRED - {ex}")
@@ -64,7 +69,7 @@ def lead_auto_assignment():
             {
                 "status": "fail", 
                 "error": "Invalid Payload received",
-                "message": "Correct Payload format -> {'listing_zip': 'A1A 1A1', 'listing_province': 'Ontario', 'listing_city': 'Toronto', 'buyer_province': 'British Columbia', 'buyer_city': 'Vancouver', 'buyer_email': 'test@mail.com', 'buyer_name': 'John'}"
+                "message": "Correct Payload format -> {'listing_zip': 'A1A 1A1', 'listing_province': 'Ontario', 'listing_city': 'Toronto', 'buyer_province': 'British Columbia', 'buyer_city': 'Vancouver', 'buyer_email': 'test@mail.com', 'buyer_name': 'John', 'cold_lead': True}"
             }
             ), 422
 
@@ -85,9 +90,9 @@ def lead_auto_assignment():
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER EMAIL AFTER N/A FORMATTING -- {buyer_email}")
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER NAME AFTER N/A FORMATTING -- {buyer_name}")
 
-    # executing lead auto assignment function; returning result
-    result = main(postalcode, listing_province,
-                  listing_city, buyer_city, buyer_province, buyer_email, buyer_name)
+    # executing lead auto assignment function
+    result = lead_auto_assignment_main(postalcode, listing_province,
+                  listing_city, buyer_city, buyer_province, buyer_email, buyer_name, cold_lead)
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
     return jsonify(result), 200
@@ -117,16 +122,6 @@ def round_robin():
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
     return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
 
-
-
-@app.route('/assign_cold_lead', methods=['POST'])
-def assign_cold_lead():
-
-    # no listing; location ?
-    # take city -> search realtor by city -> |not required| realtors by top priority -> realtors by nation -> realtors by category -> rr
-    # if no city -> take province -> pond
-
-    return jsonify({"success": True}), 200
 
 
 if SSH_MODE == 0:
