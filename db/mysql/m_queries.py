@@ -278,7 +278,7 @@ def get_top_priority_realtors(connector, realtors: list):
                 team_member_priority_for_lead_assign DESC;
         """
     curr = connector.cursor()
-    curr.execute(query, (realtors, realtors))
+    curr.execute(query, (tuple(realtors), tuple(realtors)))
     data = curr.fetchall()
     logging.info(f"{get_top_priority_realtors.__name__} -- SQL RESPONSE - {data}")
 
@@ -313,7 +313,7 @@ def get_realtors_nationality(connector, realtors: list):
                 id DESC
         """
     curr = connector.cursor()
-    curr.execute(query, (realtors, realtors))
+    curr.execute(query, (tuple(realtors), tuple(realtors)))
     data = curr.fetchall()
     logging.info(f"{get_realtors_nationality.__name__} -- SQL RESPONSE - {data}")
 
