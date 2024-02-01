@@ -1,7 +1,7 @@
 from logging_config import logger as logging
 import pretty_errors
 import json
-from .m_connector import mysql_connector
+from m_connector import mysql_connector
 import re
 
 # logging.basicConfig(level=logging.INFO,
@@ -247,8 +247,57 @@ def get_buyer_name(connector, buyer_email: str):
     return data[-1][-1] if data else None
 
 
+@mysql_connector
+def get_top_priority_realtors(connector, realtors: list):
+    logging.info(f"{get_top_priority_realtors.__name__} -- SELECTING DATA IN tbl_customers")
+
+    result = []
+
+    if not realtors:
+        return result
+    
+    query = """
+
+            SELECT
+                email,
+                team_member_priority_for_lead_assign AS priority
+            FROM
+                tbl_customers
+            WHERE
+                team_member_priority_for_lead_assign = (
+                    SELECT
+                        MAX(team_member_priority_for_lead_assign) AS max_priority
+                    FROM
+                        tbl_customers
+                    WHERE
+                        email IN %s
+            )
+            AND 
+                email IN %s
+            ORDER BY
+                team_member_priority_for_lead_assign DESC;
+        """
+    curr = connector.cursor()
+    curr.execute(query, (realtors, realtors))
+    data = curr.fetchall()
+    logging.info(f"{get_top_priority_realtors.__name__} -- SQL RESPONSE - {data}")
+
+    # prepare_result
+    if data:
+        result = [item[0] for item in data]
+    return result
+
+
+
+
+
 if __name__ == "__main__":
     # print(is_valid_postal_code("A1A 1A1"))
     # print(get_buyer_name("hiba.shahbaz@gmail.com"))
-    print(get_buyer_name("test.com"))
+    # print(get_buyer_name("test.com"))
     # print(get_realtors_in_polygon("Toronto", "Ontario", "A1A 1A1"))
+
+    print(get_top_priority_realtors(['jack@fb4s.com', 'drew@fb4s.com', 'omgil12@yahoo.com']))
+    print(get_top_priority_realtors(['jack@fb4s.com']))
+    print(get_top_priority_realtors(['a']))
+    print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))

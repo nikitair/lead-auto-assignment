@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import pretty_errors
-import pprint
 from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
 from main import main
@@ -9,9 +8,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
 SSH_MODE = os.getenv("SSH_MODE")
-
 
 app = Flask(__name__)
 

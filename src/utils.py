@@ -2,6 +2,7 @@ from random import randint
 from logging_config import logger as logging
 import pretty_errors
 from db.postgres import p_queries as postgres
+from db.mysql import m_queries as mysql
 import requests
 import os
 import pprint
@@ -77,6 +78,10 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
     """
     assigned_realtor = None
     if type(realtors) == list and len(realtors) > 0:
+
+
+        # 1. Evaluating top priority realtors
+        top_priority_realtors = mysql.get_top_priority_realtors(realtors)
 
         # PREMIUM realtors
         if "manoj@movewithmanoj.ca" in realtors:
