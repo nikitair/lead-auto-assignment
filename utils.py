@@ -44,7 +44,7 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
 
 def get_nationality(name: str):
 
-    logging.info(f"{get_nationality} -- EVALUATING BUYER NATIONALITY")
+    logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY")
 
     response = requests.get(
         f"https://api.nationalize.io/?name={name}"
@@ -57,7 +57,7 @@ def get_nationality(name: str):
     if status == 200 and type(data.get("country")) == list and len(data["country"]) > 0:
         nationality_array = [country["country_id"] for country in data["country"]]
 
-    logging.info(f"{get_nationality} -- NATIONALITY API RESPONSE - {data}")
+    logging.info(f"{get_nationality.__name__} -- NATIONALITY API RESPONSE - {data}")
     
     if "IN" in nationality_array:
         return "IN"
