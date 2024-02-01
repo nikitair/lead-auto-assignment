@@ -243,10 +243,12 @@ def get_buyer_name(connector, buyer_email: str):
 
     data = curr.fetchall()
     logging.info(f"{get_buyer_name.__name__} -- SQL RESPONSE - {data}")
-    curr.close()
 
-    return data[-1][-1]
+    return data[-1][-1] if data else None
 
 
 if __name__ == "__main__":
-    print(is_valid_postal_code("A1A 1A1"))
+    # print(is_valid_postal_code("A1A 1A1"))
+    # print(get_buyer_name("hiba.shahbaz@gmail.com"))
+    print(get_buyer_name("test.com"))
+    # print(get_realtors_in_polygon("Toronto", "Ontario", "A1A 1A1"))

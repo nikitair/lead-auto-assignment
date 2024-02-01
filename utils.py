@@ -44,7 +44,10 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
 
 def get_nationality(name: str):
 
-    logging.info(f"{get_nationality} -- EVALUATING BUYER NATIONALITY")
+    logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY")
+
+    if not name:
+        return None
 
     response = requests.get(
         f"https://api.nationalize.io/?name={name}"
@@ -57,7 +60,7 @@ def get_nationality(name: str):
     if status == 200 and type(data.get("country")) == list and len(data["country"]) > 0:
         nationality_array = [country["country_id"] for country in data["country"]]
 
-    logging.info(f"{get_nationality} -- NATIONALITY API RESPONSE - {data}")
+    logging.info(f"{get_nationality.__name__} -- NATIONALITY API RESPONSE - {data}")
     
     if "IN" in nationality_array:
         return "IN"
@@ -88,7 +91,7 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
         
         buyer_nationality = get_nationality(buyer_name)
         
-        if get_nationality(buyer_name) and ("jack@fb4s.com" in realtors or "harman@fb4s.com" in realtors):
+        if buyer_nationality and ("jack@fb4s.com" in realtors or "harman@fb4s.com" in realtors):
             return realtors_nation_dict[buyer_nationality]
 
         try:
@@ -111,6 +114,9 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
 
 
 def get_pond_id(lead_province: str):
+
+    pond_id = 3
+
     url = "https://api.followupboss.com/v1/ponds?offset=0&limit=100"
 
     headers = {
@@ -119,9 +125,15 @@ def get_pond_id(lead_province: str):
     }
 
     response = requests.get(url, headers=headers)
-    data = response.json()
-    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE -- {pprint.pformat(data)}")
-    pond_id = 3
+    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE STATUS -- {response.status_code}")
+
+    try:
+        data = response.json()
+        logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE DATA -- {data}")
+
+    except Exception as ex:
+        logging.error(f"{get_pond_id.__name__} -- !!! ERROR OCCURRED - {ex}")
+        return pond_id
 
     if type(data) == dict and data.get("ponds"):
         for pond in data.get("ponds"):
@@ -129,10 +141,11 @@ def get_pond_id(lead_province: str):
                 pond_id = pond["id"]
                 break
     logging.info(f"{get_pond_id.__name__} -- POND ID -- {pond_id}")
+
     return pond_id
 
 
 
 if __name__ == "__main__":
-    # get_pond_id("Manitoba")
-    pprint.pprint(get_nationality("John"))
+    get_pond_id("Manitoba")
+    # pprint.pprint(get_nationality(None))
