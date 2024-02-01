@@ -46,6 +46,9 @@ def get_nationality(name: str):
 
     logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY")
 
+    if not name:
+        return None
+
     response = requests.get(
         f"https://api.nationalize.io/?name={name}"
     )
@@ -88,7 +91,7 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
         
         buyer_nationality = get_nationality(buyer_name)
         
-        if get_nationality(buyer_name) and ("jack@fb4s.com" in realtors or "harman@fb4s.com" in realtors):
+        if buyer_nationality and ("jack@fb4s.com" in realtors or "harman@fb4s.com" in realtors):
             return realtors_nation_dict[buyer_nationality]
 
         try:
@@ -135,4 +138,4 @@ def get_pond_id(lead_province: str):
 
 if __name__ == "__main__":
     # get_pond_id("Manitoba")
-    pprint.pprint(get_nationality("John"))
+    pprint.pprint(get_nationality(None))

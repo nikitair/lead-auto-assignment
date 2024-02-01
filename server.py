@@ -94,7 +94,7 @@ def round_robin():
         realtors = payload["realtors"]
         buyer_name = payload["buyer_name"]
     except Exception as ex:
-        logging.error(f"{round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}")
+        logging.error(f"{round_robin.__name__} -- !!! UNEXPECTED ERROR - {ex}")
         return jsonify(
             {
                 "status": "fail", 
@@ -102,6 +102,7 @@ def round_robin():
                 "message": "Correct Payload format -> {'realtors': ['realtor1@mail.com', 'realtor1@mail.com'], 'buyer_name': 'John'}"
             }
             ), 422
+
    
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
     return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors, buyer_name)}), 200
