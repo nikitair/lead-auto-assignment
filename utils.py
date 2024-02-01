@@ -82,7 +82,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         realtors = mysql.get_top_priority_realtors(realtors)
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
 
-        if len(realtors) == 1:
+        if realtors and len(realtors) == 1:
             return realtors[0]
         
         # 2. Nationality evaluation (exit point)
