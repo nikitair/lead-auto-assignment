@@ -328,7 +328,7 @@ def get_realtors_nationality(connector, realtors: list):
         result = []
 
         for item in data:
-            result.append({item[0]: nationality_descriptor.get(str(item[1]))})
+            result.append({item[0]: nationality_descriptor.get(list(item[1])[0])})
 
     return result
 
