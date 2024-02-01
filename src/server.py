@@ -3,7 +3,7 @@ import pretty_errors
 from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
 from main import main
-from utils import get_realtor_by_round_robin
+from utils import get_realtor_to_assign
 import os
 from dotenv import load_dotenv
 
@@ -56,6 +56,7 @@ def lead_auto_assignment():
         buyer_city = payload["buyer_city"]
         buyer_province = payload["buyer_province"]
         buyer_email = payload["buyer_email"]
+        buyer_name = payload["buyer_name"]
 
     except Exception as ex:
         logging.error(f"{lead_auto_assignment.__name__} -- !!! ERROR OCCURRED - {ex}")
@@ -63,7 +64,7 @@ def lead_auto_assignment():
             {
                 "status": "fail", 
                 "error": "Invalid Payload received",
-                "message": "Correct Payload format -> {'listing_zip': 'A1A 1A1', 'listing_province': 'Ontario', 'listing_city': 'Toronto', 'buyer_province': 'British Columbia', 'buyer_city': 'Vancouver', 'buyer_email': 'test@mail.com'}"
+                "message": "Correct Payload format -> {'listing_zip': 'A1A 1A1', 'listing_province': 'Ontario', 'listing_city': 'Toronto', 'buyer_province': 'British Columbia', 'buyer_city': 'Vancouver', 'buyer_email': 'test@mail.com', 'buyer_name': 'John'}"
             }
             ), 422
 
@@ -74,6 +75,7 @@ def lead_auto_assignment():
     buyer_city = buyer_city if buyer_city != "N/A" else ""
     buyer_province = buyer_province if buyer_province != "N/A" else ""
     buyer_email = buyer_email if buyer_email != "N/A" else ""
+    buyer_name = buyer_name if buyer_name != "N/A" else ""
 
     logging.info(f"{lead_auto_assignment.__name__} -- POSTALCODE AFTER N/A FORMATTING -- {postalcode}")
     logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_province}")
@@ -81,10 +83,11 @@ def lead_auto_assignment():
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER AFTER N/A FORMATTING -- {buyer_province}")
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER CITY AFTER N/A FORMATTING -- {buyer_city}")
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER EMAIL AFTER N/A FORMATTING -- {buyer_email}")
+    logging.info(f"{lead_auto_assignment.__name__} -- BUYER NAME AFTER N/A FORMATTING -- {buyer_name}")
 
     # executing lead auto assignment function; returning result
     result = main(postalcode, listing_province,
-                  listing_city, buyer_city, buyer_province, buyer_email)
+                  listing_city, buyer_city, buyer_province, buyer_email, buyer_name)
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
     return jsonify(result), 200
@@ -112,7 +115,19 @@ def round_robin():
 
    
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
-    return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors, buyer_name)}), 200
+    return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
+
+
+
+@app.route('/assign_cold_lead', methods=['POST'])
+def assign_cold_lead():
+
+    # no listing; location ?
+    # take city -> search realtor by city -> |not required| realtors by top priority -> realtors by nation -> realtors by category -> rr
+    # if no city -> take province -> pond
+
+    return jsonify({"success": True}), 200
+
 
 if SSH_MODE == 0:
     # configure WSGI

@@ -70,7 +70,7 @@ def get_nationality(name: str, search_nations):
     return None
 
 
-def get_realtor_by_round_robin(realtors: list, buyer_name: str):
+def get_realtor_to_assign(realtors: list, buyer_name: str):
     """
     return realtor to assign according to the round-robin logic
     """
@@ -78,21 +78,21 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
     if type(realtors) == list and len(realtors) > 0:
 
         # 1. Evaluating top priority realtors (exit point)
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- 1. TOP PRIORITY EVALUATION")
+        logging.info(f"{get_realtor_to_assign.__name__} -- 1. TOP PRIORITY EVALUATION")
         realtors = mysql.get_top_priority_realtors(realtors)
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
+        logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
 
         if len(realtors) == 1:
             return realtors[0]
         
         # 2. Nationality evaluation (exit point)
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- 2. NATIONALITY EVALUATION")
+        logging.info(f"{get_realtor_to_assign.__name__} -- 2. NATIONALITY EVALUATION")
         
         realtors_nationalities = mysql.get_realtors_nationality(realtors)
-        buyer_nationality = get_nationality(buyer_name, [nation for nation in realtors_nationalities.values() if nation])
+        buyer_nationality = get_nationality(buyer_name, [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]])
 
-        national_realtors = [realtor.keys()[0] for realtor in realtors_nationalities if realtor.values()[0] == buyer_nationality]
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- REALTORS BY NATIONAL EVALUATIONS - {national_realtors}")
+        national_realtors = [list(realtor.keys())[0] for realtor in realtors_nationalities if list(realtor.values())[0] == buyer_nationality]
+        logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONAL EVALUATIONS - {national_realtors}")
 
         if len(national_realtors) > 0:
             realtors = national_realtors
@@ -100,18 +100,18 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
 
         # 3. Category evaluation
         # to be implemented
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- 3. CATEGORY EVALUATION")
+        logging.info(f"{get_realtor_to_assign.__name__} -- 3. CATEGORY EVALUATION")
 
 
         # 4. Round Robin
-        logging.info(f"{get_realtor_by_round_robin.__name__} -- 4. ROUND ROBIN EVALUATION")
+        logging.info(f"{get_realtor_to_assign.__name__} -- 4. ROUND ROBIN EVALUATION")
         try:
             assigned_realtor = postgres.get_realtor_to_assign(realtors)
             logging.info(
-                f"{get_realtor_by_round_robin.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
+                f"{get_realtor_to_assign.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
         except Exception as ex:
             logging.error(
-                f"{get_realtor_by_round_robin.__name__} -- !!! ERROR OCCURRED -- {ex}")
+                f"{get_realtor_to_assign.__name__} -- !!! ERROR OCCURRED -- {ex}")
 
         if assigned_realtor:
             assigned_realtor = assigned_realtor[-1][0]
@@ -119,7 +119,7 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
             assigned_realtor = realtors[randint(0, len(realtors) - 1)]
 
     logging.info(
-        f"{get_realtor_by_round_robin.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
+        f"{get_realtor_to_assign.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
     return assigned_realtor
 
 

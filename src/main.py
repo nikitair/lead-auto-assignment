@@ -2,12 +2,12 @@ import json
 from random import randint
 import pretty_errors
 from logging_config import logger as  logging
-from utils import prepare_postalcode, get_not_excluded_realtors, get_realtor_by_round_robin, get_pond_id
+from utils import prepare_postalcode, get_not_excluded_realtors, get_realtor_to_assign, get_pond_id
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
 
-def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str) -> dict:
+def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str, buyer_name: str) -> dict:
     """
     the main function that executes full lead auto assignment cycle
     """
@@ -25,7 +25,9 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
     postalcode = prepare_postalcode(postalcode)
 
-    buyer_name = mysql.get_buyer_name(buyer_email=buyer_email)
+    if not buyer_name:
+        buyer_name = mysql.get_buyer_name(buyer_email=buyer_email)
+
     logging.info(f"{main.__name__} -- BUYER NAME -- {buyer_name}")
 
     logging.info(f"{main.__name__} -- SEARCH PROVINCE -- {province}")
@@ -43,7 +45,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
             response["realtor_emails"].append(city[3])
 
         # evaluation assigned realtor by the Round-Robin logic
-        response["assigned_realtor"] = get_realtor_by_round_robin(response["realtor_emails"], buyer_name)
+        response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"], buyer_name)
     
     # nobody found in additional cities
     else:
@@ -64,7 +66,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
                     response["realtor_emails"].append(realtor)
 
                 # evaluation assigned realtor by the Round-Robin logic
-                response["assigned_realtor"] = get_realtor_by_round_robin(response["realtor_emails"], buyer_name)
+                response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"], buyer_name)
 
     # evaluating initial Pond of the lead
     if response["assigned_realtor"] == "willow@fb4s.com": 
@@ -74,4 +76,4 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
 
 if __name__ == "__main__":
-    print(main("", "", "", "", "", ""))
+    print(main("", "", "", "", "", "", ""))
