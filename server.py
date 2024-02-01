@@ -23,7 +23,11 @@ def index():
     """
     logging.info(f"{index.__name__} -- INDEX ENDPOINT TRIGGERED -- {request.method}")
     return render_template('index.html')
-    # return jsonify({"message": "hello world"})
+    
+
+@app.errorhandler(404)
+def not_found(e):
+  return render_template('404.html'), 404
 
 
 @app.route('/assign_lead', methods=['POST'])
@@ -103,8 +107,8 @@ def round_robin():
     return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors, buyer_name)}), 200
 
 if SSH_MODE == 0:
-    # configuring wsgi
+    # configure WSGI
     app = WSGIMiddleware(app)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')
