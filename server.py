@@ -5,6 +5,12 @@ from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
 from main import main
 from utils import get_realtor_by_round_robin
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SSH_MODE = os.getenv("SSH_MODE")
 
 
 app = Flask(__name__)
@@ -70,9 +76,9 @@ def round_robin():
         realtors = payload.get("realtors")
         return jsonify({"assigned_realtor": get_realtor_by_round_robin(realtors)}), 200
 
-
-# configuring wsgi
-app = WSGIMiddleware(app)
+if SSH_MODE == 0:
+    # configuring wsgi
+    app = WSGIMiddleware(app)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
