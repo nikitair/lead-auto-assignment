@@ -5,6 +5,7 @@ from logging_config import logger as logging
 from dotenv import load_dotenv
 import mysql.connector
 from sshtunnel import SSHTunnelForwarder
+import pymysql
 
 # logging.basicConfig(level=logging.INFO,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,13 +21,10 @@ MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_PORT = os.getenv("MYSQL_PORT")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
-SSH_USERNAME = os.getenv("SSH_MYSQL_USERNAME")
-SSH_SERVER_ADDRESS=os.getenv("SSH_MYSQL_SERVER_ADDRESS")
-SSH_SERVER_PORT = int(os.getenv("SSH_MYSQL_SERVER_PORT"))
-LOCAL_PORT = os.getenv("MYSQL_LOCAL_PORT")
-
-POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+SSH_MYSQL_USERNAME = os.getenv("SSH_MYSQL_USERNAME")
+SSH_MYSQL_SERVER_ADDRESS = os.getenv("SSH_MYSQL_SERVER_ADDRESS")
+SSH_MYSQL_SERVER_PORT = os.getenv("SSH_MYSQL_SERVER_PORT")
+SSH_MYSQL_LOCAL_PORT = os.getenv("SSH_MYSQL_LOCAL_PORT")
 
 
 def mysql_connector(func):
@@ -36,34 +34,39 @@ def mysql_connector(func):
     def inner(*args, **kwargs):
         logging.info(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
         if SSH_MODE == 1:
-            # starting SSH tunnelling
-            # server = SSHTunnelForwarder(
-            #     (SSH_SERVER_ADDRESS, SSH_SERVER_PORT),
-            #     ssh_username=SSH_USERNAME,
-            #     ssh_pkey=SSH_PKEY,
-            #     remote_bind_address=(MYSQL_HOST, int(MYSQL_PORT)),
-            #     local_bind_address=("localhost", int(LOCAL_PORT))
-            # )
-            # server.start()
-
-            server = SSHTunnelForwarder(
-                (SSH_SERVER_ADDRESS, SSH_SERVER_PORT),
-                ssh_username=SSH_USERNAME,
+            
+            # SSH tunnel setup
+            tunnel = SSHTunnelForwarder(
+                (SSH_MYSQL_SERVER_ADDRESS, int(SSH_MYSQL_SERVER_PORT)),
+                ssh_username=SSH_MYSQL_USERNAME,
                 ssh_pkey=SSH_PKEY,
-                remote_bind_address=(POSTGRES_HOST, int(POSTGRES_PORT)),
-                local_bind_address=("localhost", int(LOCAL_PORT))
+                remote_bind_address=(MYSQL_HOST, int(MYSQL_PORT)),
+                local_bind_address=('0.0.0.0', int(SSH_MYSQL_LOCAL_PORT))
             )
-            server.start()
 
+            tunnel.start()
             logging.info("MYSQL SSH TUNNEL STARTED")
 
-            connection = mysql.connector.connect(
-                host=MYSQL_HOST,
-                # port=LOCAL_PORT,
+            # Connect to the MySQL database via the SSH tunnel
+            connection = pymysql.connect(
+                host='127.0.0.1',
+                port=tunnel.local_bind_port,
                 user=MYSQL_USER,
                 password=MYSQL_PASSWORD,
-                database=MYSQL_DB
+                database=MYSQL_DB,
             )
+            logging.info("MYSQL CONNECTED")
+            
+            try:
+                return func(connection, *args, **kwargs)
+            except Exception as ex:
+                logging.error(f"!!! MYSQL ERROR -- {ex}")
+            finally:
+                tunnel.stop()
+                logging.info("MYSQL SSH TUNNEL DISCONNECTED")
+                connection.close()
+                logging.info("MYSQL DISCONNECTED")
+            
         else:
             connection = mysql.connector.connect(
                 host=MYSQL_HOST,
@@ -79,9 +82,6 @@ def mysql_connector(func):
         finally:
             connection.close()
             logging.info("MYSQL DISCONNECTED")
-            if SSH_MODE == 1:
-                server.stop()
-                logging.info("MYSQL SSH TUNNEL DISCONNECTED")
     return inner
 
 
@@ -92,7 +92,7 @@ def mysql_demo_query(connector):
     curr.execute("SELECT * FROM tbl_customers LIMIT 1")
     data = curr.fetchall()
     curr.close()
-    logging.debug(data)
+    logging.info(data)
     return data
 
 
