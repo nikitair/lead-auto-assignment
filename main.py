@@ -74,4 +74,4 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
 
 if __name__ == "__main__":
-    main("N/A", "N/A", "N/A", "N/A", "N/A", "N/A")
+    print(main("", "", "", "", "", ""))

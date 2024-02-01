@@ -114,6 +114,9 @@ def get_realtor_by_round_robin(realtors: list, buyer_name: str):
 
 
 def get_pond_id(lead_province: str):
+
+    pond_id = 3
+
     url = "https://api.followupboss.com/v1/ponds?offset=0&limit=100"
 
     headers = {
@@ -122,9 +125,15 @@ def get_pond_id(lead_province: str):
     }
 
     response = requests.get(url, headers=headers)
-    data = response.json()
-    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE -- {pprint.pformat(data)}")
-    pond_id = 3
+    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE STATUS -- {response.status_code}")
+
+    try:
+        data = response.json()
+        logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE DATA -- {data}")
+
+    except Exception as ex:
+        logging.error(f"{get_pond_id.__name__} -- !!! ERROR OCCURRED - {ex}")
+        return pond_id
 
     if type(data) == dict and data.get("ponds"):
         for pond in data.get("ponds"):
@@ -132,10 +141,11 @@ def get_pond_id(lead_province: str):
                 pond_id = pond["id"]
                 break
     logging.info(f"{get_pond_id.__name__} -- POND ID -- {pond_id}")
+
     return pond_id
 
 
 
 if __name__ == "__main__":
-    # get_pond_id("Manitoba")
-    pprint.pprint(get_nationality(None))
+    get_pond_id("Manitoba")
+    # pprint.pprint(get_nationality(None))
