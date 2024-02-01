@@ -11,6 +11,8 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
     """
     the main function that executes full lead auto assignment cycle
     """
+    logging.info(f"{main.__name__} -- STARTING LEAD AUTO ASSIGNMENT -- {buyer_name}")
+
     response = {
         "realtor_1": 0,
         "realtor_emails": [],
