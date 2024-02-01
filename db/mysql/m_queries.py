@@ -256,8 +256,7 @@ def get_top_priority_realtors(connector, realtors: list):
     if not realtors:
         return result
     
-    query = """
-
+    query = f"""
             SELECT
                 email,
                 team_member_priority_for_lead_assign AS priority
@@ -270,15 +269,16 @@ def get_top_priority_realtors(connector, realtors: list):
                     FROM
                         tbl_customers
                     WHERE
-                        email IN (%s)
-            )
+                        email IN ({", ".join(['%s' for _ in realtors])})
+                )
             AND 
-                email IN (%s)
+                email IN ({", ".join(['%s' for _ in realtors])})
             ORDER BY
                 team_member_priority_for_lead_assign DESC;
         """
+
     curr = connector.cursor()
-    curr.execute(query, (",".join(realtors), ",".join(realtors)))
+    curr.execute(query, realtors * 2)
     data = curr.fetchall()
     logging.info(f"{get_top_priority_realtors.__name__} -- SQL RESPONSE - {data}")
 
@@ -299,21 +299,22 @@ def get_realtors_nationality(connector, realtors: list):
     if not realtors:
         return result
     
-    query = """
+    query = f"""
             SELECT
                 email,
                 team_member_preferred_nationalities as nationality
             FROM
                 tbl_customers
             WHERE 
-                email IN (%s)
+                email IN ({', '.join(['%s'] * len(realtors))})
             OR
-                email IN (%s)
+                email IN ({', '.join(['%s'] * len(realtors))})
             ORDER BY
-                id DESC
+                tbl_customers.id DESC;
         """
+
     curr = connector.cursor()
-    curr.execute(query, (",".join(realtors), ",".join(realtors)))
+    curr.execute(query, realtors + realtors)
     data = curr.fetchall()
     logging.info(f"{get_realtors_nationality.__name__} -- SQL RESPONSE - {data}")
 
@@ -344,7 +345,7 @@ if __name__ == "__main__":
     # print(get_top_priority_realtors(['jack@fb4s.com', 'drew@fb4s.com', 'omgil12@yahoo.com']))
     # print(get_top_priority_realtors(['jack@fb4s.com']))
     # print(get_top_priority_realtors(['a']))
-    # print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))
+    print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))
     # print(get_top_priority_realtors(['soraia@fb4s.com', 'jack@fb4s.com']))
     # print(get_top_priority_realtors(['duncan@fb4s.com']))
     # print(get_top_priority_realtors(['duncan@fb4s.com', 'nikita@fb4s.com']))
