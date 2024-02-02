@@ -53,7 +53,7 @@ def get_excluded_cities(connector, city, province, email):
 
 
 @postgres_connector
-def get_realtor_to_assign(connector, realtor_emails):
+def get_realtor_by_round_robin(connector, realtor_emails):
     logging.info(f"get_realtor_to_assign -- SELECTING REALTOR TO ASSIGN BY ROUND ROBIN - {realtor_emails}")
 
     curr = connector.cursor()

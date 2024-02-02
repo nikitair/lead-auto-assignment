@@ -118,7 +118,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         # 4. Round Robin
         logging.info(f"{get_realtor_to_assign.__name__} -- 4. ROUND ROBIN EVALUATION")
         try:
-            assigned_realtor = postgres.get_realtor_to_assign(realtors)
+            assigned_realtor = postgres.get_realtor_by_round_robin(realtors)
         except Exception as ex:
             logging.error(f"{get_realtor_to_assign.__name__} -- !!! ERROR OCCURRED -- {ex}")
 

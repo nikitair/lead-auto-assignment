@@ -32,7 +32,7 @@ def mysql_connector(func):
     decorator that connects to MySQL DB and executes inputted query handler; handles exceptions
     """
     def inner(*args, **kwargs):
-        logging.info(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
+        logging.debug(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
         if SSH_MODE == 1:
             
             # SSH tunnel setup
@@ -45,7 +45,7 @@ def mysql_connector(func):
             )
 
             tunnel.start()
-            logging.info("MYSQL SSH TUNNEL STARTED")
+            logging.debug("MYSQL SSH TUNNEL STARTED")
 
             # Connect to the MySQL database via the SSH tunnel
             connection = pymysql.connect(
@@ -55,7 +55,7 @@ def mysql_connector(func):
                 password=MYSQL_PASSWORD,
                 database=MYSQL_DB,
             )
-            logging.info("MYSQL CONNECTED")
+            logging.debug("MYSQL CONNECTED")
             
             try:
                 return func(connection, *args, **kwargs)
@@ -63,9 +63,9 @@ def mysql_connector(func):
                 logging.error(f"!!! MYSQL ERROR -- {ex}")
             finally:
                 tunnel.stop()
-                logging.info("MYSQL SSH TUNNEL DISCONNECTED")
+                logging.debug("MYSQL SSH TUNNEL DISCONNECTED")
                 connection.close()
-                logging.info("MYSQL DISCONNECTED")
+                logging.debug("MYSQL DISCONNECTED")
             
         else:
             connection = mysql.connector.connect(
@@ -74,14 +74,14 @@ def mysql_connector(func):
                 password=MYSQL_PASSWORD,
                 database=MYSQL_DB
             )
-        logging.info("MYSQL CONNECTED")
+        logging.debug("MYSQL CONNECTED")
         try:
             return func(connection, *args, **kwargs)
         except Exception as ex:
             logging.error(f"!!! MYSQL ERROR -- {ex}")
         finally:
             connection.close()
-            logging.info("MYSQL DISCONNECTED")
+            logging.debug("MYSQL DISCONNECTED")
     return inner
 
 

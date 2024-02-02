@@ -5,9 +5,6 @@ from dotenv import load_dotenv
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
 
-# logging.basicConfig(level=logging.INFO,
-#                     format='%(asctime)s - %(levelname)s - %(message)s')
-
 load_dotenv()
 
 SSH_MODE = int(os.getenv("SSH_MODE"))
@@ -30,7 +27,7 @@ def postgres_connector(func):
     decorator that connects to Postgres DB and executes inputted query handler; handles exceptions
     """
     def inner(*args, **kwargs):
-        logging.info(f"CONNECTING TO POSTGRES WITH SSH MODE {SSH_MODE}")
+        logging.debug(f"CONNECTING TO POSTGRES WITH SSH MODE {SSH_MODE}")
 
         if SSH_MODE == 1:
             # starting SSH tunnel
@@ -42,7 +39,7 @@ def postgres_connector(func):
                 local_bind_address=("localhost", int(LOCAL_PORT))
             )
             server.start()
-            logging.info("POSTGRES SSH TUNNEL STARTED")
+            logging.debug("POSTGRES SSH TUNNEL STARTED")
 
             conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                     password=POSTGRES_PASSWORD, host="localhost", port=LOCAL_PORT)
@@ -50,17 +47,17 @@ def postgres_connector(func):
              conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER,
                                     password=POSTGRES_PASSWORD, host=POSTGRES_HOST, port=POSTGRES_PORT)
         
-        logging.info(f"CONNECTED TO POSTGRES")
+        logging.debug(f"CONNECTED TO POSTGRES")
         try:
             return func(conn, *args, **kwargs)
         except Exception as ex:
             logging.error(f"!!! POSTGRES ERROR -- {ex}")
         finally:
             conn.close()
-            logging.info("POSTGRES DISCONNECTED")
+            logging.debug("POSTGRES DISCONNECTED")
             if SSH_MODE == 1:
                 server.stop()
-                logging.info("POSTGRES SSH TUNNEL DISCONNECTED")
+                logging.debug("POSTGRES SSH TUNNEL DISCONNECTED")
 
     return inner
 
