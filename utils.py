@@ -17,6 +17,8 @@ def prepare_postalcode(postalcode: str):
     """
     formats formats code into desired format -- A1A1A1 -> A1A 1A1 
     """
+    logging.info(f"{prepare_postalcode.__name__} -- FORMATTING POSTAL CODE - {postalcode}")
+
     res = ''
     if type(postalcode) == str:
         if len(postalcode) > 0:
@@ -31,24 +33,28 @@ def get_not_excluded_realtors(city: str, province: str, email_array: list) -> li
     """
     returns realtors who are not in excluded cities table
     """
+    logging.info(f"{get_not_excluded_realtors.__name__} -- EVALUATING NOT EXCLUDED REALTORS - {email_array}")
+
     excluded_emails = []
+
     for email in email_array:
-        excluded_email = postgres.get_excluded_cities_by_city_province_emails(
-            city, province, email)
+
+        excluded_email = postgres.get_excluded_cities(city, province, email)
+
         if len(excluded_email) > 0:
             excluded_emails.append(excluded_email[0][3])
-    logging.info(f"EXCLUDED REALTORS -- {excluded_emails}")
-    not_excluded_emails = [
-        email for email in email_array if email not in excluded_emails]
+
+    logging.info(f"{get_not_excluded_realtors.__name__} -- EXCLUDED REALTORS -- {excluded_emails}")
+
+    not_excluded_emails = [email for email in email_array if email not in excluded_emails]
+    logging.info(f"{get_not_excluded_realtors.__name__} -- NOT EXCLUDED REALTORS -- {not_excluded_emails}")
+
     return not_excluded_emails
 
 
 def get_nationality(name: str, search_nations):
 
-    logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY")
-
-    print("# name ", name)
-    print("# search_nations ",  search_nations)
+    logging.info(f"{get_nationality.__name__} -- EVALUATING BUYER NATIONALITY - {name}")
 
     if not name or len(search_nations) < 1:
         return None
@@ -69,7 +75,7 @@ def get_nationality(name: str, search_nations):
     for nation in nationality_array:
         if nation in search_nations:
             return nation
-        
+          
     return None
 
 
@@ -79,6 +85,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
     """
     assigned_realtor = None
     if type(realtors) == list and len(realtors) > 0:
+        logging.info(f"{get_realtor_to_assign.__name__} -- EVALUATING REALTOR TO ASSIGN - {realtors}")
 
         # 1. Evaluating top priority realtors (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 1. TOP PRIORITY EVALUATION")
@@ -92,20 +99,16 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         logging.info(f"{get_realtor_to_assign.__name__} -- 2. NATIONALITY EVALUATION")
         
         realtors_nationalities = mysql.get_realtors_nationality(realtors)
-        print("* realtors_nationalities ", realtors_nationalities)
-
-        search_nationalities = [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]]
-        print("* search_nationalities ", search_nationalities)
+        logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS NATIONALITIES - {realtors_nationalities}")
 
         buyer_nationality = get_nationality(buyer_name, [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]])
-        print("* buyer_nationality ", buyer_nationality)
+        logging.info(f"{get_realtor_to_assign.__name__} -- BUYER NATIONALITY - {buyer_nationality}")
 
         national_realtors = [list(realtor.keys())[0] for realtor in realtors_nationalities if list(realtor.values())[0] == buyer_nationality]
-        logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONAL EVALUATIONS - {national_realtors}")
+        logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONALITY EVALUATION - {national_realtors}")
 
         if len(national_realtors) > 0:
             realtors = national_realtors
-
 
         # 3. Category evaluation
         # to be implemented
@@ -116,23 +119,20 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         logging.info(f"{get_realtor_to_assign.__name__} -- 4. ROUND ROBIN EVALUATION")
         try:
             assigned_realtor = postgres.get_realtor_to_assign(realtors)
-            logging.info(
-                f"{get_realtor_to_assign.__name__} -- ROUND-ROBIN ASSIGNED REALTOR -- {assigned_realtor}")
         except Exception as ex:
-            logging.error(
-                f"{get_realtor_to_assign.__name__} -- !!! ERROR OCCURRED -- {ex}")
+            logging.error(f"{get_realtor_to_assign.__name__} -- !!! ERROR OCCURRED -- {ex}")
 
         if assigned_realtor:
             assigned_realtor = assigned_realtor[-1][0]
         else:
             assigned_realtor = realtors[randint(0, len(realtors) - 1)]
 
-    logging.info(
-        f"{get_realtor_to_assign.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
+    logging.info(f"{get_realtor_to_assign.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
     return assigned_realtor
 
 
 def get_pond_id(lead_province: str):
+    logging.info(f"{get_pond_id.__name__} -- EVALUATING POND ID -- {lead_province}")
 
     pond_id = 3
 

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pretty_errors
 from logging_config import logger as  logging
 from a2wsgi import WSGIMiddleware
-from main import lead_auto_assignment_main
+from main import main
 from utils import get_realtor_to_assign
 import os
 from dotenv import load_dotenv
@@ -91,7 +91,7 @@ def lead_auto_assignment():
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER NAME AFTER N/A FORMATTING -- {buyer_name}")
 
     # executing lead auto assignment main function
-    result = lead_auto_assignment_main(postalcode, listing_province,
+    result = main(postalcode, listing_province,
                   listing_city, buyer_city, buyer_province, buyer_email, buyer_name, int(cold_lead))
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
