@@ -7,7 +7,7 @@ from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
 
-def lead_auto_assignment_main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str, buyer_name: str, cold_lead = None) -> dict:
+def lead_auto_assignment_main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str, buyer_name: str, cold_lead = 0) -> dict:
     """
     the main function that executes full lead auto assignment cycle
     """
@@ -20,10 +20,16 @@ def lead_auto_assignment_main(postalcode: str, listing_province: str, listing_ci
         "assigned_pond_id": 31
     }
 
-    province = listing_province if listing_province not in (None, "") else buyer_province
-    city = listing_city if listing_city not in (None, "") else buyer_city
-    # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
-    postalcode = prepare_postalcode(postalcode)
+    if cold_lead:
+        province = buyer_province
+        city = buyer_city
+        postalcode = None
+    else:
+        province = listing_province if listing_province not in (None, "") else buyer_province
+        city = listing_city if listing_city not in (None, "") else buyer_city
+
+        # formatting postal code to the desired format -- A1A1A1 -> A1A 1A1
+        postalcode = prepare_postalcode(postalcode)
 
     if not buyer_name:
         buyer_name = mysql.get_buyer_name(buyer_email=buyer_email)

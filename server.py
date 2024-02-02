@@ -59,8 +59,8 @@ def lead_auto_assignment():
         buyer_email = payload["buyer_email"]
         buyer_name = payload["buyer_name"]
 
-        cold_lead = payload.get("cold_lead")
-        if cold_lead:
+        cold_lead = payload.get("cold_lead", 0)
+        if cold_lead or not postalcode:
             logging.info(f"{lead_auto_assignment.__name__} -- COLD LEAD")
 
     except Exception as ex:
@@ -90,9 +90,9 @@ def lead_auto_assignment():
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER EMAIL AFTER N/A FORMATTING -- {buyer_email}")
     logging.info(f"{lead_auto_assignment.__name__} -- BUYER NAME AFTER N/A FORMATTING -- {buyer_name}")
 
-    # executing lead auto assignment function
+    # executing lead auto assignment main function
     result = lead_auto_assignment_main(postalcode, listing_province,
-                  listing_city, buyer_city, buyer_province, buyer_email, buyer_name, cold_lead)
+                  listing_city, buyer_city, buyer_province, buyer_email, buyer_name, int(cold_lead))
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
     return jsonify(result), 200
