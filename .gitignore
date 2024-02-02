@@ -7,3 +7,4 @@ tbl_market_leader_postal_codes.json
 *.log
 sandbox.py
 ssh_demo.py
+sandbox*
