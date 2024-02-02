@@ -187,7 +187,15 @@ def get_realtors_nationality(connector, realtors: list):
         result = []
 
         for item in data:
-            nationality = list(item[1])[0]
+
+            if type(item[1]) == set:
+                nationality = list(item[1])[0]
+            else:
+                nationality = item[1]
+
+            logging.info(nationality)
+            logging.info(nationality_descriptor.get(nationality))
+
             result.append({item[0]: nationality_descriptor.get(nationality)})
 
     return result

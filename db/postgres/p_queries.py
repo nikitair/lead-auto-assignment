@@ -54,7 +54,7 @@ def get_excluded_cities(connector, city, province, email):
 
 @postgres_connector
 def get_realtor_by_round_robin(connector, realtor_emails):
-    logging.info(f"get_realtor_to_assign -- SELECTING REALTOR TO ASSIGN BY ROUND ROBIN - {realtor_emails}")
+    logging.info(f"get_realtor_by_round_robin -- SELECTING REALTOR TO ASSIGN BY ROUND ROBIN - {realtor_emails}")
 
     curr = connector.cursor()
     curr.execute(
@@ -81,7 +81,7 @@ def get_realtor_by_round_robin(connector, realtor_emails):
     )
     data = curr.fetchall()
 
-    logging.info(f"get_realtor_to_assign -- SQL RESPONSE - {data}")
+    logging.info(f"get_realtor_by_round_robin -- SQL RESPONSE - {data}")
     curr.close()
     
     return data

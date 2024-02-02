@@ -10,20 +10,20 @@ class UTCFormatter(logging.Formatter):
 
 # Logging configuration
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # Custom UTC formatter
 formatter = UTCFormatter('%(asctime)s - %(levelname)s - %(message)s')
 
 # Terminal output
 th = logging.StreamHandler()
-th.setLevel(logging.DEBUG)
+th.setLevel(logging.INFO)
 th.setFormatter(formatter)
 logger.addHandler(th)
 
 # File output
 fh = logging.FileHandler('logs.log')
-fh.setLevel(logging.DEBUG)
+fh.setLevel(logging.INFO)
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 

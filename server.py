@@ -43,7 +43,7 @@ def lead_auto_assignment():
     lead auto assignment endpoint
     """
     
-    logging.info(f"\n\n{lead_auto_assignment.__name__} -- LEAD AUTO ASSIGNMENT ENDPOINT TRIGGERED")
+    logging.info(f"{lead_auto_assignment.__name__} -- LEAD AUTO ASSIGNMENT ENDPOINT TRIGGERED")
 
     try:
         # receiving lead payload
@@ -94,7 +94,7 @@ def lead_auto_assignment():
     result = main(postalcode, listing_province,
                   listing_city, buyer_city, buyer_province, buyer_email, buyer_name, int(cold_lead))
     
-    logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}")
+    logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}\n\n")
     return jsonify(result), 200
 
 
@@ -122,7 +122,7 @@ def round_robin():
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
     return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
 
-# app = WSGIMiddleware(app)
+app = WSGIMiddleware(app)
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5050, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')

@@ -107,8 +107,12 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         national_realtors = [list(realtor.keys())[0] for realtor in realtors_nationalities if list(realtor.values())[0] == buyer_nationality]
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONALITY EVALUATION - {national_realtors}")
 
-        if len(national_realtors) > 0:
+        if len(national_realtors) == 1:
+            return national_realtors[0]
+        
+        elif len(national_realtors) > 1:
             realtors = national_realtors
+        
 
         # 3. Category evaluation
         # to be implemented
