@@ -53,11 +53,11 @@ def lead_auto_assignment():
         postalcode = payload.get("listing_zip")
         listing_province = payload.get("listing_province")
         listing_city = payload.get("listing_city")
+        buyer_name = payload.get("buyer_name")
 
         buyer_city = payload["buyer_city"]
         buyer_province = payload["buyer_province"]
         buyer_email = payload["buyer_email"]
-        buyer_name = payload["buyer_name"]
 
         cold_lead = payload.get("cold_lead", 0)
         if cold_lead or not postalcode:
