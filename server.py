@@ -69,7 +69,8 @@ def lead_auto_assignment():
             {
                 "status": "fail", 
                 "error": "Invalid Payload received",
-                "message": "Correct Payload format -> {'listing_zip': 'A1A 1A1', 'listing_province': 'Ontario', 'listing_city': 'Toronto', 'buyer_province': 'British Columbia', 'buyer_city': 'Vancouver', 'buyer_email': 'test@mail.com', 'buyer_name': 'John', 'cold_lead': True}"
+                "message": "Required Fields: buyer_city, buyer_province, buyer_email\n\n" \
+                "Preferred Payload format -> {'listing_zip': 'A1A 1A1', 'listing_province': 'Ontario', 'listing_city': 'Toronto', 'buyer_province': 'British Columbia', 'buyer_city': 'Vancouver', 'buyer_email': 'test@mail.com', 'buyer_name': 'John', 'cold_lead': True}"
             }
             ), 422
 
