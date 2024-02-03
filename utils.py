@@ -169,6 +169,19 @@ def get_pond_id(lead_province: str):
     return pond_id
 
 
+def payload_validator(postalcode, listing_province, listing_city, buyer_name, buyer_city, buyer_province, buyer_email):
+    logging.info(f"{payload_validator.__name__} -- VALIDATING PAYLOAD")
+    valid = True
+
+    if not postalcode and not listing_city and not listing_province and not buyer_city and not buyer_province:
+        valid = False
+
+    if not buyer_email and not buyer_name:
+        valid = False
+
+    return valid
+
+
 
 if __name__ == "__main__":
     # get_pond_id("Manitoba")
