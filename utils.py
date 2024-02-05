@@ -140,31 +140,33 @@ def get_pond_id(lead_province: str):
 
     pond_id = 3
 
-    url = "https://api.followupboss.com/v1/ponds?offset=0&limit=100"
+    if lead_province:
 
-    headers = {
-        "accept": "application/json",
-        "authorization": f"Basic {FUB_API_64}"
-    }
+        url = "https://api.followupboss.com/v1/ponds?offset=0&limit=100"
 
-    response = requests.get(url, headers=headers)
+        headers = {
+            "accept": "application/json",
+            "authorization": f"Basic {FUB_API_64}"
+        }
 
-    logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE STATUS -- {response.status_code}")
+        response = requests.get(url, headers=headers)
 
-    try:
-        data = response.json()
-        logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE DATA -- {data}")
+        logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE STATUS -- {response.status_code}")
 
-    except Exception as ex:
-        logging.error(f"{get_pond_id.__name__} -- !!! ERROR OCCURRED - {ex}")
-        return pond_id
+        try:
+            data = response.json()
+            logging.info(f"{get_pond_id.__name__} -- FUB RESPONSE DATA -- {data}")
 
-    if type(data) == dict and data.get("ponds"):
-        for pond in data.get("ponds"):
-            if f"{lead_province.title()} (Out of Polygon)" == pond["name"]:  
-                pond_id = pond["id"]
-                break
-    logging.info(f"{get_pond_id.__name__} -- POND ID -- {pond_id}")
+        except Exception as ex:
+            logging.error(f"{get_pond_id.__name__} -- !!! ERROR OCCURRED - {ex}")
+            return pond_id
+
+        if type(data) == dict and data.get("ponds"):
+            for pond in data.get("ponds"):
+                if f"{lead_province.title()} (Out of Polygon)" == pond["name"]:  
+                    pond_id = pond["id"]
+                    break
+        logging.info(f"{get_pond_id.__name__} -- POND ID -- {pond_id}")
 
     return pond_id
 
