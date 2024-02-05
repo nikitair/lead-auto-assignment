@@ -75,7 +75,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
 
     # evaluating initial Pond of the lead
     if response["assigned_realtor"] == "willow@fb4s.com": 
-        response["assigned_pond_id"] = get_pond_id(listing_province)
+        response["assigned_pond_id"] = get_pond_id(province)
 
     return response
 
