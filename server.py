@@ -60,7 +60,8 @@ def bad_method(e):
   return jsonify(
       {
             "error": "Method is NOT allowed",
-            "success": False  
+            "success": False,
+            "message": str(e)
         }
   ), 405
 
