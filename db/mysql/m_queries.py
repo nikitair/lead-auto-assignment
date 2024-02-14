@@ -1,7 +1,7 @@
 from logging_config import logger as logging
 import pretty_errors
 import json
-from .m_connector import mysql_connector
+from m_connector import mysql_connector
 import re
 
 # logging.basicConfig(level=logging.INFO,
@@ -202,10 +202,53 @@ def get_realtors_nationality(connector, realtors: list):
 
 
 @mysql_connector
-def get_realtors_category(connector, realtors: list):
-    ...
+def get_listing_category(connector, listing_mls: str):
+    logging.info(f"get_listing_category -- SELECTING LISTING CATEGORY - {listing_mls}")
+
+    query = """
+        SELECT
+            compiled_category_name AS category
+        FROM
+            tbl_advertisement
+        WHERE
+            DDF_ID = %s
+        LIMIT
+            1
+        """
+    curr = connector.cursor()
+    curr.execute(query, (listing_mls,))
+
+    data = curr.fetchall()
+    logging.info(f"get_listing_category -- SQL RESPONSE - {data}")
+
+    return data[0][-1] if data else None
 
 
+
+
+@mysql_connector
+def get_realtors_category(connector, realtors: list, category: str) -> list | None:
+    logging.info(f"get_realtors_category -- SELECTING REALTORS CATEGORIES - {realtors}")
+    query = f"""
+                SELECT
+                    email,
+                    team_member_preferred_categories AS category
+                FROM
+                    tbl_customers
+                WHERE
+                    email IN ({', '.join(['%s'] * len(realtors))})
+                AND 
+                    team_member_preferred_categories = '{category.lower()}'
+            """
+    curr = connector.cursor()
+    curr.execute(query, realtors)
+
+    data = curr.fetchall()
+    logging.info(f"get_realtors_category -- SQL RESPONSE - {data}")
+
+    return [item[0] for item in data] if data else None
+
+    
 
 if __name__ == "__main__":
     # print(is_valid_postal_code("A1A 1A1"))
@@ -216,11 +259,14 @@ if __name__ == "__main__":
     # print(get_top_priority_realtors(['jack@fb4s.com', 'drew@fb4s.com', 'omgil12@yahoo.com']))
     # print(get_top_priority_realtors(['jack@fb4s.com']))
     # print(get_top_priority_realtors(['a']))
-    print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))
+    # print(get_top_priority_realtors(['soraia@fb4s.com', 'manoj@fb4s.com']))
     # print(get_top_priority_realtors(['soraia@fb4s.com', 'jack@fb4s.com']))
     # print(get_top_priority_realtors(['duncan@fb4s.com']))
     # print(get_top_priority_realtors(['duncan@fb4s.com', 'nikita@fb4s.com']))
     # print(get_top_priority_realtors(['soraia@fb4s.com', 'Manoj@MoveWithManoj.ca', 'manoj@fb4s.com']))
     # print(get_top_priority_realtors(['Manoj@MoveWithManoj.ca', 'manoj@fb4s.com']))
 
-    print(get_realtors_nationality(realtors=['jack@fb4s.com', 'harman@fb4s.com', 'manoj@fb4s.com']))
+    # print(get_realtors_nationality(realtors=['jack@fb4s.com', 'harman@fb4s.com', 'manoj@fb4s.com']))
+
+    # print(get_listing_category(listing_mls="R2680048"))
+    print(get_realtors_category(realtors=('drew@fb4s.com', 'manoj@fb4s.com'), category='Farms'))
