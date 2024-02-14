@@ -90,7 +90,17 @@ def get_realtor_to_assign(realtors: list, buyer_name: str, listing_mls: str):
         # 1. Category evaluation
         if listing_mls:
             logging.info(f"{get_realtor_to_assign.__name__} -- 1. CATEGORY EVALUATION")
+            listing_category = mysql.get_listing_category(listing_mls=listing_mls)
 
+            if listing_category:
+                realtors_matched_category = mysql.get_realtors_category(realtors=realtors, category=listing_category)
+                logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY CATEGORY EVALUATIONS - {realtors_matched_category}")
+
+                if realtors_matched_category and len(realtors_matched_category) == 1:
+                    return realtors_matched_category[0]
+                
+                elif len(realtors_matched_category) > 1:
+                    realtors = realtors_matched_category
 
         # 2. Evaluating top priority realtors (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 2. TOP PRIORITY EVALUATION")
@@ -100,7 +110,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str, listing_mls: str):
         if realtors and len(realtors) == 1:
             return realtors[0]
         
-        
+
         # 3. Nationality evaluation (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 3. NATIONALITY EVALUATION")
         
