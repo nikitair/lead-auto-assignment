@@ -227,7 +227,7 @@ def get_listing_category(connector, listing_mls: str):
 
 
 @mysql_connector
-def get_realtors_category(connector, realtors: list, category: str) -> list | None:
+def get_realtors_category(connector, realtors: list, category: str) -> list:
     logging.info(f"get_realtors_category -- SELECTING REALTORS CATEGORIES - {realtors}")
     query = f"""
                 SELECT
@@ -246,7 +246,7 @@ def get_realtors_category(connector, realtors: list, category: str) -> list | No
     data = curr.fetchall()
     logging.info(f"get_realtors_category -- SQL RESPONSE - {data}")
 
-    return [item[0] for item in data] if data else None
+    return [item[0] for item in data] if data else []
 
     
 

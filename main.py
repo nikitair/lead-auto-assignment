@@ -71,7 +71,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
                     response["realtor_emails"].append(realtor)
 
                 # evaluation assigned realtor by the Round-Robin logic
-                response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"], buyer_name)
+                response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"], buyer_name, listing_mls)
 
     # evaluating initial Pond of the lead
     if response["assigned_realtor"] == "willow@fb4s.com": 
