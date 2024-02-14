@@ -1,7 +1,7 @@
 from logging_config import logger as logging
 import pretty_errors
 import json
-from m_connector import mysql_connector
+from .m_connector import mysql_connector
 import re
 
 # logging.basicConfig(level=logging.INFO,
