@@ -98,6 +98,8 @@ def lead_auto_assignment():
         buyer_email = payload.get("buyer_email")
         cold_lead = payload.get("cold_lead", 0)
 
+        listing_mls = payload.get("listing_mls")
+
         if cold_lead or (not postalcode and not listing_city and not listing_province):
             logging.info(f"{lead_auto_assignment.__name__} -- COLD LEAD")
 
@@ -109,6 +111,7 @@ def lead_auto_assignment():
         buyer_province = buyer_province if buyer_province != "N/A" else ""
         buyer_email = buyer_email if buyer_email != "N/A" else ""
         buyer_name = buyer_name if buyer_name != "N/A" else ""
+        listing_mls = listing_mls if listing_mls != "N/A" else ""
 
         logging.info(f"{lead_auto_assignment.__name__} -- POSTALCODE AFTER N/A FORMATTING -- {postalcode}")
         logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_province}")
@@ -117,6 +120,7 @@ def lead_auto_assignment():
         logging.info(f"{lead_auto_assignment.__name__} -- BUYER CITY AFTER N/A FORMATTING -- {buyer_city}")
         logging.info(f"{lead_auto_assignment.__name__} -- BUYER EMAIL AFTER N/A FORMATTING -- {buyer_email}")
         logging.info(f"{lead_auto_assignment.__name__} -- BUYER NAME AFTER N/A FORMATTING -- {buyer_name}")
+        logging.info(f"{lead_auto_assignment.__name__} -- LISTING MLS AFTER N/A FORMATTING -- {listing_mls}")
 
         if not payload_validator(postalcode, listing_province, listing_city, buyer_name, buyer_city, buyer_province, buyer_email): 
             raise ValueError("Invalid Payload")
@@ -135,7 +139,7 @@ def lead_auto_assignment():
             ), 422
    
     # executing lead auto assignment main function
-    result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province, buyer_email, buyer_name, int(cold_lead))
+    result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province, buyer_email, buyer_name, int(cold_lead), listing_mls)
     
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}\n\n")
     return jsonify(result), 200

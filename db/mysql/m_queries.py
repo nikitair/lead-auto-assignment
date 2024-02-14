@@ -201,6 +201,11 @@ def get_realtors_nationality(connector, realtors: list):
     return result
 
 
+@mysql_connector
+def get_realtors_category(connector, realtors: list):
+    ...
+
+
 
 if __name__ == "__main__":
     # print(is_valid_postal_code("A1A 1A1"))

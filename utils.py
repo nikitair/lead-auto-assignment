@@ -79,7 +79,7 @@ def get_nationality(name: str, search_nations):
     return None
 
 
-def get_realtor_to_assign(realtors: list, buyer_name: str):
+def get_realtor_to_assign(realtors: list, buyer_name: str, listing_mls: str):
     """
     return realtor to assign according to the round-robin logic
     """
@@ -87,16 +87,22 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
     if type(realtors) == list and len(realtors) > 0:
         logging.info(f"{get_realtor_to_assign.__name__} -- EVALUATING REALTOR TO ASSIGN - {realtors}")
 
-        # 1. Evaluating top priority realtors (exit point)
-        logging.info(f"{get_realtor_to_assign.__name__} -- 1. TOP PRIORITY EVALUATION")
+        # 1. Category evaluation
+        if listing_mls:
+            logging.info(f"{get_realtor_to_assign.__name__} -- 1. CATEGORY EVALUATION")
+
+
+        # 2. Evaluating top priority realtors (exit point)
+        logging.info(f"{get_realtor_to_assign.__name__} -- 2. TOP PRIORITY EVALUATION")
         realtors = mysql.get_top_priority_realtors(realtors)
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
 
         if realtors and len(realtors) == 1:
             return realtors[0]
         
-        # 2. Nationality evaluation (exit point)
-        logging.info(f"{get_realtor_to_assign.__name__} -- 2. NATIONALITY EVALUATION")
+        
+        # 3. Nationality evaluation (exit point)
+        logging.info(f"{get_realtor_to_assign.__name__} -- 3. NATIONALITY EVALUATION")
         
         realtors_nationalities = mysql.get_realtors_nationality(realtors)
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS NATIONALITIES - {realtors_nationalities}")
@@ -112,11 +118,6 @@ def get_realtor_to_assign(realtors: list, buyer_name: str):
         
         elif len(national_realtors) > 1:
             realtors = national_realtors
-        
-
-        # 3. Category evaluation
-        # to be implemented
-        logging.info(f"{get_realtor_to_assign.__name__} -- 3. CATEGORY EVALUATION")
 
 
         # 4. Round Robin

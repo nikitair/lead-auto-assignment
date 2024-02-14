@@ -7,7 +7,7 @@ from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 
 
-def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str, buyer_name: str, cold_lead = 0) -> dict:
+def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: str, buyer_province: str, buyer_email: str, buyer_name: str, cold_lead = 0, listing_mls=None) -> dict:
     """
     the main function that executes full lead auto assignment cycle
     """
@@ -51,7 +51,7 @@ def main(postalcode: str, listing_province: str, listing_city: str, buyer_city: 
             response["realtor_emails"].append(city[3])
 
         # evaluation assigned realtor by the Round-Robin logic
-        response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"], buyer_name)
+        response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"], buyer_name, listing_mls)
     
     # nobody found in additional cities
     else:
