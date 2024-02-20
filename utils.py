@@ -70,11 +70,11 @@ def get_nationality(name: str, search_nations):
         nationality_array = [country["country_id"] for country in data["country"]]
 
     logging.info(f"{get_nationality.__name__} -- NATIONALITY API RESPONSE - {data}")
-    
+
     for nation in nationality_array:
         if nation in search_nations:
             return nation
-        
+
     return None
 
 
@@ -90,10 +90,24 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
         # 1. Category evaluation
         logging.info(f"{get_realtor_to_assign.__name__} -- 1. CATEGORY EVALUATION")
         realtors_categories = mysql.get_realtors_category(realtors)
+        evalueted_realtors_by_categoriy = []
+
+        for realtor in realtors_categories:
+            if realtor["category"] in listing_categories:
+                evalueted_realtors_by_categoriy.append(realtor["email"])
+
+        logging.info("{get_realtor_to_assign.__name__} -- REALTORS BY CATEGORY EVALUATIONS - "
+                     f"{evalueted_realtors_by_categoriy}")
+
+        if len(evalueted_realtors_by_categoriy) == 1:
+            return evalueted_realtors_by_categoriy[0]
+        elif len(evalueted_realtors_by_categoriy) > 1:
+            realtors = evalueted_realtors_by_categoriy
 
         # 2. Evaluating top priority realtors (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 2. TOP PRIORITY EVALUATION")
         realtors = mysql.get_top_priority_realtors(realtors)
+
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
 
         if realtors and len(realtors) == 1:
@@ -113,10 +127,9 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
 
         if len(national_realtors) == 1:
             return national_realtors[0]
-        
+
         elif len(national_realtors) > 1:
             realtors = national_realtors
-
 
         # 4. Round Robin
         logging.info(f"{get_realtor_to_assign.__name__} -- 4. ROUND ROBIN EVALUATION")

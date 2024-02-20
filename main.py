@@ -1,6 +1,5 @@
 import json
 from random import randint
-import pretty_errors
 from logging_config import logger as  logging
 from utils import (prepare_postalcode, get_not_excluded_realtors,
                    get_realtor_to_assign, get_pond_id,
