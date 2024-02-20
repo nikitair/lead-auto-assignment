@@ -49,15 +49,14 @@ cold_lead_payload = {
     "buyer_email": "john@mail.com"
 }
 
-
 @app.route('/', methods=['GET'])
 def index():
     """
-    echo endpoint for server health check 
+    echo endpoint for server health check
     """
     logging.info(f"{index.__name__} -- INDEX ENDPOINT TRIGGERED -- {request.method}")
     return render_template('index.html')
-    
+
 
 @app.errorhandler(404)
 def not_found(e):
@@ -69,7 +68,7 @@ def bad_request(e):
   return jsonify(
       {
             "error": "Bad request",
-            "success": False  
+            "success": False
         }
   ), 400
 
@@ -99,7 +98,7 @@ def not_found(e):
 def lead_auto_assignment():
     """
     lead auto assignment endpoint
-    """    
+    """
     logging.info(f"{lead_auto_assignment.__name__} -- LEAD AUTO ASSIGNMENT ENDPOINT TRIGGERED")
 
     try:
@@ -169,7 +168,6 @@ def lead_auto_assignment():
 
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}\n\n")
     return jsonify(result), 200
-
 
 
 @app.route('/round_robin', methods=['POST'])
