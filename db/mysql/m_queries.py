@@ -1,7 +1,6 @@
 from logging_config import logger as logging
-import pretty_errors
 import json
-from m_connector import mysql_connector
+from .m_connector import mysql_connector
 import re
 
 # logging.basicConfig(level=logging.INFO,
@@ -37,7 +36,7 @@ def get_realtors_in_polygon(connector, city, province, postalcode):
                     id
                 FROM
                     tbl_zipcodes
-                WHERE 
+                WHERE
                     PostalCode = %s
                 )
         """
@@ -272,5 +271,5 @@ if __name__ == "__main__":
     # print(get_realtors_nationality(realtors=['jack@fb4s.com', 'harman@fb4s.com', 'manoj@fb4s.com']))
 
     # print(get_listing_category(listing_mls="R2680048"))
-    # print(get_realtors_category(realtors=('drew@fb4s.com', 'manoj@fb4s.com')))
-    print(get_realtors_category(realtors=('dfgdfgdfg',)))
+    print(get_realtors_category(realtors=('drew@fb4s.com', 'manoj@fb4s.com')))
+    # print(get_realtors_category(realtors=('dfgdfgdfg',)))

@@ -1,6 +1,5 @@
 from random import randint
 from logging_config import logger as logging
-import pretty_errors
 from db.postgres import p_queries as postgres
 from db.mysql import m_queries as mysql
 import requests
@@ -75,11 +74,12 @@ def get_nationality(name: str, search_nations):
     for nation in nationality_array:
         if nation in search_nations:
             return nation
-          
+        
     return None
 
 
-def get_realtor_to_assign(realtors: list, buyer_name: str, listing_mls: str):
+def get_realtor_to_assign(realtors: list, buyer_name: str,
+                          listing_mls: str, listing_categories: list):
     """
     return realtor to assign according to the round-robin logic
     """
@@ -88,19 +88,8 @@ def get_realtor_to_assign(realtors: list, buyer_name: str, listing_mls: str):
         logging.info(f"{get_realtor_to_assign.__name__} -- EVALUATING REALTOR TO ASSIGN - {realtors}")
 
         # 1. Category evaluation
-        if listing_mls:
-            logging.info(f"{get_realtor_to_assign.__name__} -- 1. CATEGORY EVALUATION")
-            listing_category = mysql.get_listing_category(listing_mls=listing_mls)
-
-            if listing_category:
-                realtors_matched_category = mysql.get_realtors_category(realtors=realtors, category=listing_category)
-                logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY CATEGORY EVALUATIONS - {realtors_matched_category}")
-
-                if realtors_matched_category and len(realtors_matched_category) == 1:
-                    return realtors_matched_category[0]
-                
-                elif len(realtors_matched_category) > 1:
-                    realtors = realtors_matched_category
+        logging.info(f"{get_realtor_to_assign.__name__} -- 1. CATEGORY EVALUATION")
+        realtors_categories = mysql.get_realtors_category(realtors)
 
         # 2. Evaluating top priority realtors (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 2. TOP PRIORITY EVALUATION")
@@ -109,11 +98,10 @@ def get_realtor_to_assign(realtors: list, buyer_name: str, listing_mls: str):
 
         if realtors and len(realtors) == 1:
             return realtors[0]
-        
 
         # 3. Nationality evaluation (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 3. NATIONALITY EVALUATION")
-        
+
         realtors_nationalities = mysql.get_realtors_nationality(realtors)
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS NATIONALITIES - {realtors_nationalities}")
 
@@ -182,7 +170,9 @@ def get_pond_id(lead_province: str):
     return pond_id
 
 
-def payload_validator(postalcode, listing_province, listing_city, buyer_name, buyer_city, buyer_province, buyer_email):
+def payload_validator(postalcode, listing_province,
+                      listing_city, buyer_name,
+                      buyer_city, buyer_province, buyer_email):
     logging.info(f"{payload_validator.__name__} -- VALIDATING PAYLOAD")
     valid = True
 
@@ -195,8 +185,14 @@ def payload_validator(postalcode, listing_province, listing_city, buyer_name, bu
     return valid
 
 
+def format_listing_categories(listing_categories: str) -> list:
+    res = listing_categories.split(",") if listing_categories else []
+    logging.info(f"{format_listing_categories.__name__} -- FORMATTED LISTING CATEGORIES - {res}")
+    return res
+
 
 if __name__ == "__main__":
     # get_pond_id("Manitoba")
     # pprint.pprint(get_nationality(None))
-    print(get_nationality("Nikita"))
+    # print(get_nationality("Nikita"))
+    format_listing_categories()

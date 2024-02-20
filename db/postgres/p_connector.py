@@ -1,6 +1,5 @@
 import os
 from logging_config import logger as  logging
-import pretty_errors
 from dotenv import load_dotenv
 import psycopg2
 from sshtunnel import SSHTunnelForwarder

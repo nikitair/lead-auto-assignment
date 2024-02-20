@@ -8,6 +8,26 @@ import os
 from dotenv import load_dotenv
 import pprint
 
+
+# {
+#     "listing_mls": "C8052326",
+#     "listing_zip": "V3R3P5",
+#     "listing_city": "Surrey",
+#     "listing_categories": "service-businesses,laundromats",
+#     "listing_province": "British Columbia",
+#     "buyer_name": "Fionn",
+#     "buyer_email": "fionnlai64@gmail.com",
+#     "buyer_city": "N/A",
+#     "buyer_province": "N/A",
+#     "buyer_fub_id": 14035,
+#     "connection_owner_id": "18705",
+#     "connection_type": "follow_up_boss",
+#     "selected_realtor_email": "jack@fb4s.com",
+#     "auto_assign": 1,
+#     "is_cold_lead": "0"
+# }
+
+
 load_dotenv()
 SSH_MODE = os.getenv("SSH_MODE")
 
@@ -91,6 +111,7 @@ def lead_auto_assignment():
         postalcode = payload.get("listing_zip")
         listing_province = payload.get("listing_province")
         listing_city = payload.get("listing_city")
+        listing_categories = payload.get("listing_categories")
 
         buyer_name = payload.get("buyer_name")
         buyer_city = payload.get("buyer_city")
@@ -112,6 +133,7 @@ def lead_auto_assignment():
         buyer_email = buyer_email if buyer_email != "N/A" else ""
         buyer_name = buyer_name if buyer_name != "N/A" else ""
         listing_mls = listing_mls if listing_mls != "N/A" else ""
+        listing_categories = listing_categories if listing_categories != "N/A" else ""
 
         logging.info(f"{lead_auto_assignment.__name__} -- POSTALCODE AFTER N/A FORMATTING -- {postalcode}")
         logging.info(f"{lead_auto_assignment.__name__} -- LISTING AFTER N/A FORMATTING -- {listing_province}")
@@ -121,6 +143,7 @@ def lead_auto_assignment():
         logging.info(f"{lead_auto_assignment.__name__} -- BUYER EMAIL AFTER N/A FORMATTING -- {buyer_email}")
         logging.info(f"{lead_auto_assignment.__name__} -- BUYER NAME AFTER N/A FORMATTING -- {buyer_name}")
         logging.info(f"{lead_auto_assignment.__name__} -- LISTING MLS AFTER N/A FORMATTING -- {listing_mls}")
+        logging.info(f"{lead_auto_assignment.__name__} -- LISTING CATEGORIES AFTER N/A FORMATTING -- {listing_categories}")
 
         if not payload_validator(postalcode, listing_province, listing_city, buyer_name, buyer_city, buyer_province, buyer_email): 
             raise ValueError("Invalid Payload")
@@ -137,10 +160,14 @@ def lead_auto_assignment():
                 "hot_lead_required_fields": ['buyer_email or buyer_name', 'listing_province_province']
             }
             ), 422
-   
+
     # executing lead auto assignment main function
-    result = main(postalcode, listing_province, listing_city, buyer_city, buyer_province, buyer_email, buyer_name, int(cold_lead), listing_mls)
-    
+    result = main(postalcode, listing_province,
+                  listing_city, buyer_city,
+                  buyer_province, buyer_email,
+                  buyer_name, int(cold_lead),
+                  listing_mls, listing_categories)
+
     logging.info(f"{lead_auto_assignment.__name__} -- RESPONSE -- {result}\n\n")
     return jsonify(result), 200
 
@@ -165,7 +192,7 @@ def round_robin():
             }
             ), 422
 
-   
+
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
     return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
 
