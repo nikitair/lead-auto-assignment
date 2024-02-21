@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from db.mysql import m_queries as mysql
 from db.postgres import p_queries as postgres
 from logging_config import logger as logging
+from nationality_decoder import nationality_decoder
 
 load_dotenv()
 
@@ -146,7 +147,10 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONALITY EVALUATION - {national_realtors}")
 
         if len(national_realtors) == 1:
-            detailed_info["realtor_nationality"] = list(realtors_nationalities[0].values())[0]
+
+            realtor_nationality_code = next((d[national_realtors[0]] for d in realtors_nationalities if national_realtors[0] in d), None)
+
+            detailed_info["realtor_nationality"] = nationality_decoder.get(realtor_nationality_code, realtor_nationality_code)
             detailed_info["win_type"] = "nationality"
 
             return national_realtors[0], detailed_info

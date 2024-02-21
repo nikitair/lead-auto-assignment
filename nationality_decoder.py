@@ -1,4 +1,4 @@
-{
+nationality_decoder = {
     'AF': 'afghan',
     'AX': 'aland',
     'AL': 'albanian',
