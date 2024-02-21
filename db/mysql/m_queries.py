@@ -142,12 +142,16 @@ def get_top_priority_realtors(connector, realtors: list):
     data = curr.fetchall()
     logging.info(f"get_top_priority_realtors -- SQL RESPONSE - {data}")
 
+    priority_score = 0
+
     # prepare_result
     if data:
         result = [item[0] for item in data]
+        priority_score = data[0][1]
+
     else:
         result = realtors
-    return result
+    return result, priority_score
 
 
 @mysql_connector

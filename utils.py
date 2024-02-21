@@ -86,35 +86,53 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
     return realtor to assign according to the round-robin logic
     """
     assigned_realtor = None
+
+    detailed_info = {
+        "win_type": "",
+        "realtor_category": "",
+        "realtor_nationality": "",
+        "realtor_priority": 0
+    }
+
+
     if type(realtors) == list and len(realtors) > 0:
         logging.info(f"{get_realtor_to_assign.__name__} -- EVALUATING REALTOR TO ASSIGN - {realtors}")
 
         # 1. Category evaluation
         logging.info(f"{get_realtor_to_assign.__name__} -- 1. CATEGORY EVALUATION")
         realtors_categories = mysql.get_realtors_category(realtors)
-        evalueted_realtors_by_categoriy = []
+        evaluated_realtors_by_category = []
 
         for realtor in realtors_categories:
             if realtor["category"] in listing_categories:
-                evalueted_realtors_by_categoriy.append(realtor["email"])
+                evaluated_realtors_by_category.append(realtor["email"])
 
         logging.info("{get_realtor_to_assign.__name__} -- REALTORS BY CATEGORY EVALUATIONS - "
-                     f"{evalueted_realtors_by_categoriy}")
+                     f"{evaluated_realtors_by_category}")
 
-        if len(evalueted_realtors_by_categoriy) == 1:
-            return evalueted_realtors_by_categoriy[0]
-        if len(evalueted_realtors_by_categoriy) > 1:
-            realtors = evalueted_realtors_by_categoriy
+        if len(evaluated_realtors_by_category) == 1:
+
+            detailed_info["realtor_category"] = realtors_categories[0]["category"]
+            detailed_info["win_type"] = "category"
+
+            return evaluated_realtors_by_category[0], detailed_info
+        
+        if len(evaluated_realtors_by_category) > 1:
+            realtors = evaluated_realtors_by_category
 
         # 2. Evaluating top priority realtors (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 2. TOP PRIORITY EVALUATION")
-        realtors = mysql.get_top_priority_realtors(realtors)
+        realtors, priority_score = mysql.get_top_priority_realtors(realtors)
 
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY TOP PRIORITY EVALUATIONS - {realtors}")
 
         if realtors and len(realtors) == 1:
-            return realtors[0]
 
+            detailed_info["win_type"] = "priority"
+            detailed_info["realtor_priority"] = priority_score
+
+            return realtors[0], detailed_info
+        
         # 3. Nationality evaluation (exit point)
         logging.info(f"{get_realtor_to_assign.__name__} -- 3. NATIONALITY EVALUATION")
 
@@ -124,11 +142,16 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
         buyer_nationality = get_nationality(buyer_name, [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]])
         logging.info(f"{get_realtor_to_assign.__name__} -- BUYER NATIONALITY - {buyer_nationality}")
 
+        detailed_info["realtor_nationality"] = list(realtor.keys())[1]
+
         national_realtors = [list(realtor.keys())[0] for realtor in realtors_nationalities if list(realtor.values())[0] == buyer_nationality]
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONALITY EVALUATION - {national_realtors}")
 
         if len(national_realtors) == 1:
-            return national_realtors[0]
+            detailed_info["win_type"] = "nationality"
+
+            return national_realtors[0], detailed_info
+        
 
         elif len(national_realtors) > 1:
             realtors = national_realtors
@@ -142,11 +165,12 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
 
         if assigned_realtor:
             assigned_realtor = assigned_realtor[-1][0]
+            detailed_info["win_type"] = "round-robin"
         else:
             assigned_realtor = realtors[randint(0, len(realtors) - 1)]
 
     logging.info(f"{get_realtor_to_assign.__name__} -- RESULT ASSIGNED REALTOR -- {assigned_realtor}")
-    return assigned_realtor
+    return assigned_realtor, detailed_info
 
 
 def get_pond_id(lead_province: str):

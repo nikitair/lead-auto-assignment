@@ -19,11 +19,19 @@ def main(postalcode: str, listing_province: str,
     logging.info(f"{main.__name__} -- STARTING LEAD AUTO ASSIGNMENT")
 
     response = {
-        "realtor_1": 0,
-        "realtor_emails": [],
-        "assigned_realtor": "willow@fb4s.com",
+        "assigned_realtor": "manoj@fb4s.com",
+        "possible_realtors": [
+            "manoj@fb4s.com",
+            "soraia@fb4s.com"
+        ],
+        "realtor_type_1": 0,
         "assigned_pond_id": 31,
-        "additional_data": {},
+        "detailed_info": {
+            "win_type": "category|nationality|priority",
+            "realtor_category": "farm",
+            "buyer_nationality": "indian",
+            "realtor_priority": 0
+        }
     }
 
     if cold_lead:
@@ -54,15 +62,15 @@ def main(postalcode: str, listing_province: str,
 
     # if found in additional cities -> returning those realtor
     if len(additional_cities) > 0:
-        response["realtor_1"] = 1
+        response["realtor_type_1"] = 1
         for city in additional_cities:
-            response["realtor_emails"].append(city[3])
-
-        response["additional_data"]["additional_city"] = additional_cities
+            response["possible_realtors"].append(city[3])
 
         # evaluation assigned realtor by the Round-Robin logic
-        response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"],
-                                                             buyer_name, listing_mls, listing_categories)
+        assigned_realtor, detailed_info = get_realtor_to_assign(response["possible_realtors"],
+                                                                    buyer_name, listing_mls, listing_categories)
+        response["assigned_realtor"] = assigned_realtor
+        response["detailed_info"] = detailed_info
 
     # nobody found in additional cities
     else:
@@ -77,13 +85,15 @@ def main(postalcode: str, listing_province: str,
             # realtors found in overlapping polygon; returning them
             if len(not_excluded_realtors) > 0:
 
-                response["realtor_1"] = 1
+                response["realtor_type_1"] = 1
                 for realtor in not_excluded_realtors:
-                    response["realtor_emails"].append(realtor)
+                    response["possible_realtors"].append(realtor)
 
                 # evaluation assigned realtor by the Round-Robin logic
-                response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"],
-                                                                     buyer_name, listing_mls, listing_categories)
+                assigned_realtor, detailed_info = get_realtor_to_assign(response["possible_realtors"],
+                                                                    buyer_name, listing_mls, listing_categories)
+                response["assigned_realtor"] = assigned_realtor
+                response["detailed_info"] = detailed_info
 
     # evaluating initial Pond of the lead
     if response["assigned_realtor"] == "willow@fb4s.com": 
@@ -93,4 +103,4 @@ def main(postalcode: str, listing_province: str,
 
 
 if __name__ == "__main__":
-    print(main("", "", "", "", "", "", ""))
+    ...
