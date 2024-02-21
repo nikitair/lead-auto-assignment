@@ -23,7 +23,7 @@ def main(postalcode: str, listing_province: str,
         "possible_realtors": [
         ],
         "realtor_type_1": 1,
-        "assigned_pond_id": 31,
+        "assigned_pond_id": 0,
         "detailed_info": {
             "win_type": "pond",
             "realtor_category": None,
