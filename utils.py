@@ -88,7 +88,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
     assigned_realtor = None
 
     detailed_info = {
-        "win_type": "",
+        "win_type": "pond",
         "realtor_category": "",
         "realtor_nationality": "",
         "realtor_priority": 0
