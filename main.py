@@ -19,12 +19,10 @@ def main(postalcode: str, listing_province: str,
     logging.info(f"{main.__name__} -- STARTING LEAD AUTO ASSIGNMENT")
 
     response = {
-        "assigned_realtor": "manoj@fb4s.com",
+        "assigned_realtor": "willow@fb4s.com",
         "possible_realtors": [
-            "manoj@fb4s.com",
-            "soraia@fb4s.com"
         ],
-        "realtor_type_1": 0,
+        "realtor_type_1": 1,
         "assigned_pond_id": 31,
         "detailed_info": {
             "win_type": "category|nationality|priority",
@@ -62,7 +60,7 @@ def main(postalcode: str, listing_province: str,
 
     # if found in additional cities -> returning those realtor
     if len(additional_cities) > 0:
-        response["realtor_type_1"] = 1
+        response["realtor_type_1"] = 0
         for city in additional_cities:
             response["possible_realtors"].append(city[3])
 
@@ -85,7 +83,7 @@ def main(postalcode: str, listing_province: str,
             # realtors found in overlapping polygon; returning them
             if len(not_excluded_realtors) > 0:
 
-                response["realtor_type_1"] = 1
+                response["realtor_type_1"] = 0
                 for realtor in not_excluded_realtors:
                     response["possible_realtors"].append(realtor)
 
