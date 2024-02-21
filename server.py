@@ -189,8 +189,8 @@ def round_robin():
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
     return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
 
-# app = WSGIMiddleware(app)
+app = WSGIMiddleware(app)
 
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5050, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')
