@@ -1,10 +1,12 @@
 import os
-from logging_config import logger as logging
+
+import mysql.connector
+import pymysql
 # import logging
 from dotenv import load_dotenv
-import mysql.connector
 from sshtunnel import SSHTunnelForwarder
-import pymysql
+
+from logging_config import logger as logging
 
 # logging.basicConfig(level=logging.INFO,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -33,7 +35,7 @@ def mysql_connector(func):
     def inner(*args, **kwargs):
         logging.debug(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
         if SSH_MODE == 1:
-            
+
             # SSH tunnel setup
             tunnel = SSHTunnelForwarder(
                 (SSH_MYSQL_SERVER_ADDRESS, int(SSH_MYSQL_SERVER_PORT)),
@@ -55,7 +57,7 @@ def mysql_connector(func):
                 database=MYSQL_DB,
             )
             logging.debug("MYSQL CONNECTED")
-            
+
             try:
                 return func(connection, *args, **kwargs)
             except Exception as ex:
@@ -65,7 +67,7 @@ def mysql_connector(func):
                 logging.debug("MYSQL SSH TUNNEL DISCONNECTED")
                 connection.close()
                 logging.debug("MYSQL DISCONNECTED")
-            
+
         else:
             connection = mysql.connector.connect(
                 host=MYSQL_HOST,

@@ -1,4 +1,5 @@
 from logging_config import logger as logging
+
 from .p_connector import postgres_connector
 
 

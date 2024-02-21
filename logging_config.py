@@ -1,12 +1,14 @@
 import logging
 from datetime import datetime, timezone
 
+
 class UTCFormatter(logging.Formatter):
     def formatTime(self, record, datefmt=None):
         dt = datetime.utcfromtimestamp(record.created)
         if datefmt:
             return dt.strftime(datefmt)
         return dt.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + ' UTC'
+
 
 # Logging configuration
 logger = logging.getLogger(__name__)

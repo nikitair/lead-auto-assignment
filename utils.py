@@ -1,11 +1,13 @@
-from random import randint
-from logging_config import logger as logging
-from db.postgres import p_queries as postgres
-from db.mysql import m_queries as mysql
-import requests
 import os
 import pprint
+from random import randint
+
+import requests
 from dotenv import load_dotenv
+
+from db.mysql import m_queries as mysql
+from db.postgres import p_queries as postgres
+from logging_config import logger as logging
 
 load_dotenv()
 
@@ -101,7 +103,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
 
         if len(evalueted_realtors_by_categoriy) == 1:
             return evalueted_realtors_by_categoriy[0]
-        elif len(evalueted_realtors_by_categoriy) > 1:
+        if len(evalueted_realtors_by_categoriy) > 1:
             realtors = evalueted_realtors_by_categoriy
 
         # 2. Evaluating top priority realtors (exit point)

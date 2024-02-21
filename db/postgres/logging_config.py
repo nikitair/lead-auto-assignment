@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timezone
 
+
 class UTCFormatter(logging.Formatter):
     def formatTime(self, record, datefmt=None):
         dt = datetime.utcfromtimestamp(record.created)

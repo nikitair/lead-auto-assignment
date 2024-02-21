@@ -1,7 +1,9 @@
-from logging_config import logger as logging
 import json
-from .m_connector import mysql_connector
 import re
+
+from logging_config import logger as logging
+
+from .m_connector import mysql_connector
 
 # logging.basicConfig(level=logging.INFO,
 #                     format='%(asctime)s - %(levelname)s - %(message)s')

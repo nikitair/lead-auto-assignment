@@ -1,18 +1,17 @@
 import json
 from random import randint
-from logging_config import logger as  logging
-from utils import (prepare_postalcode, get_not_excluded_realtors,
-                   get_realtor_to_assign, get_pond_id,
-                   format_listing_categories)
-from db.postgres import p_queries as postgres
-from db.mysql import m_queries as mysql
 
+from db.mysql import m_queries as mysql
+from db.postgres import p_queries as postgres
+from logging_config import logger as logging
+from utils import (format_listing_categories, get_not_excluded_realtors,
+                   get_pond_id, get_realtor_to_assign, prepare_postalcode)
 
 
 def main(postalcode: str, listing_province: str,
          listing_city: str, buyer_city: str,
          buyer_province: str, buyer_email: str,
-         buyer_name: str, cold_lead=0,
+         buyer_name: str, cold_lead: int = 0,
          listing_mls=None, listing_categories=None) -> dict:
     """
     the main function that executes full lead auto assignment cycle
@@ -23,7 +22,8 @@ def main(postalcode: str, listing_province: str,
         "realtor_1": 0,
         "realtor_emails": [],
         "assigned_realtor": "willow@fb4s.com",
-        "assigned_pond_id": 31
+        "assigned_pond_id": 31,
+        "additional_data": {},
     }
 
     if cold_lead:
@@ -57,6 +57,8 @@ def main(postalcode: str, listing_province: str,
         response["realtor_1"] = 1
         for city in additional_cities:
             response["realtor_emails"].append(city[3])
+
+        response["additional_data"]["additional_city"] = additional_cities
 
         # evaluation assigned realtor by the Round-Robin logic
         response["assigned_realtor"] = get_realtor_to_assign(response["realtor_emails"],

@@ -1,30 +1,31 @@
-from flask import Flask, render_template, request, jsonify
-from logging_config import logger as  logging
+import os
+
 from a2wsgi import WSGIMiddleware
+from dotenv import load_dotenv
+from flask import Flask, jsonify, render_template, request
+
+from logging_config import logger as logging
 from main import main
 from utils import get_realtor_to_assign, payload_validator
-import os
-from dotenv import load_dotenv
-import pprint
 
 
-# {
-#     "listing_mls": "C8052326",
-#     "listing_zip": "V3R3P5",
-#     "listing_city": "Surrey",
-#     "listing_categories": "service-businesses,laundromats",
-#     "listing_province": "British Columbia",
-#     "buyer_name": "Fionn",
-#     "buyer_email": "fionnlai64@gmail.com",
-#     "buyer_city": "N/A",
-#     "buyer_province": "N/A",
-#     "buyer_fub_id": 14035,
-#     "connection_owner_id": "18705",
-#     "connection_type": "follow_up_boss",
-#     "selected_realtor_email": "jack@fb4s.com",
-#     "auto_assign": 1,
-#     "is_cold_lead": "0"
-# }
+PREFERED_PAYLOAD = {
+    "listing_mls": "C8052326",
+    "listing_zip": "A1A1A1",
+    "listing_city": "Surrey",
+    "listing_categories": "category1,category2",
+    "listing_province": "British Columbia",
+    "buyer_name": "Test",
+    "buyer_email": "test@test.com",
+    "buyer_city": "Toronto",
+    "buyer_province": "Ontario",
+    "buyer_fub_id": 12345,
+    "connection_owner_id": "54321",
+    "connection_type": "follow_up_boss",
+    "selected_realtor_email": "realtor@fb4s.com",
+    "auto_assign": 1,
+    "is_cold_lead": "0"
+}
 
 
 load_dotenv()
@@ -49,6 +50,7 @@ cold_lead_payload = {
     "buyer_email": "john@mail.com"
 }
 
+
 @app.route('/', methods=['GET'])
 def index():
     """
@@ -60,38 +62,38 @@ def index():
 
 @app.errorhandler(404)
 def not_found(e):
-  return render_template('404.html'), 404
+    return render_template('404.html'), 404
 
 
 @app.errorhandler(400)
 def bad_request(e):
-  return jsonify(
+    return jsonify(
       {
             "error": "Bad request",
             "success": False
         }
-  ), 400
+    ), 400
 
 
 @app.errorhandler(405)
 def bad_method(e):
-  return jsonify(
+    return jsonify(
       {
             "error": "Method is NOT allowed",
             "success": False,
             "message": str(e)
         }
-  ), 405
+    ), 405
 
 
 @app.errorhandler(500)
-def not_found(e):
-  return jsonify(
+def server_error(e):
+    return jsonify(
       {
             "error": "Unexpected Server error occurred :(",
             "success": False
         }
-  ), 500
+    ), 500
 
 
 @app.route('/assign_lead', methods=['POST'])
@@ -122,7 +124,7 @@ def lead_auto_assignment():
         if cold_lead or (not postalcode and not listing_city and not listing_province):
             logging.info(f"{lead_auto_assignment.__name__} -- COLD LEAD")
 
-         # N/A formatting
+        # N/A formatting
         postalcode = postalcode if postalcode != "N/A" else ""
         listing_province = listing_province if listing_province != "N/A" else ""
         listing_city = listing_city if listing_city != "N/A" else ""
@@ -143,21 +145,15 @@ def lead_auto_assignment():
         logging.info(f"{lead_auto_assignment.__name__} -- LISTING MLS AFTER N/A FORMATTING -- {listing_mls}")
         logging.info(f"{lead_auto_assignment.__name__} -- LISTING CATEGORIES AFTER N/A FORMATTING -- {listing_categories}")
 
-        if not payload_validator(postalcode, listing_province, listing_city, buyer_name, buyer_city, buyer_province, buyer_email): 
-            raise ValueError("Invalid Payload")
-
     except Exception as ex:
         logging.error(f"{lead_auto_assignment.__name__} -- !!! ERROR OCCURRED - {ex}")
         return jsonify(
             {
-                "status": "fail", 
+                "status": "fail",
                 "error": "Invalid Payload received",
-                "hot_lead_preferred_payload": hot_lead_payload,
-                "cold_lead_preferred_payload": cold_lead_payload,
-                "cold_lead_required_fields": ['buyer_email or buyer_name', 'buyer_province'],
-                "hot_lead_required_fields": ['buyer_email or buyer_name', 'listing_province_province']
+                "prefered_payload": PREFERED_PAYLOAD,
             }
-            ), 422
+        ), 422
 
     # executing lead auto assignment main function
     result = main(postalcode, listing_province,
@@ -173,7 +169,7 @@ def lead_auto_assignment():
 @app.route('/round_robin', methods=['POST'])
 def round_robin():
     """
-    Endpoint to choose a realtor to assign according to the for round-robin logic 
+    Endpoint to choose a realtor to assign according to the for round-robin logic
     """
     try:
         payload = request.get_json()
@@ -185,10 +181,10 @@ def round_robin():
             {
                 "status": "fail", 
                 "error": "Invalid Payload received",
-                "message": "Correct Payload format -> {'realtors': ['realtor1@mail.com', 'realtor1@mail.com'], 'buyer_name': 'John'}"
+                "message": "Correct Payload format -> {'realtors': "
+                "['realtor1@mail.com', 'realtor1@mail.com'], 'buyer_name': 'John'}"
             }
             ), 422
-
 
     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
     return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
