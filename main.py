@@ -26,9 +26,9 @@ def main(postalcode: str, listing_province: str,
         "assigned_pond_id": 31,
         "detailed_info": {
             "win_type": "pond",
-            "realtor_category": "",
-            "buyer_nationality": "",
-            "realtor_priority": 0
+            "realtor_category": None,
+            "buyer_nationality": None,
+            "realtor_priority": None
         }
     }
 
