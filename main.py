@@ -64,7 +64,6 @@ def main(postalcode: str, listing_province: str,
         for city in additional_cities:
             response["possible_realtors"].append(city[3])
 
-        # evaluation assigned realtor by the Round-Robin logic
         assigned_realtor, detailed_info = get_realtor_to_assign(response["possible_realtors"],
                                                                     buyer_name, listing_mls, listing_categories)
         response["assigned_realtor"] = assigned_realtor
@@ -87,7 +86,6 @@ def main(postalcode: str, listing_province: str,
                 for realtor in not_excluded_realtors:
                     response["possible_realtors"].append(realtor)
 
-                # evaluation assigned realtor by the Round-Robin logic
                 assigned_realtor, detailed_info = get_realtor_to_assign(response["possible_realtors"],
                                                                     buyer_name, listing_mls, listing_categories)
                 response["assigned_realtor"] = assigned_realtor

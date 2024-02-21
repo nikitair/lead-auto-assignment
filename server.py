@@ -166,30 +166,6 @@ def lead_auto_assignment():
     return jsonify(result), 200
 
 
-# @app.route('/round_robin', methods=['POST'])
-# def round_robin():
-#     """
-#     Endpoint to choose a realtor to assign according to the for round-robin logic
-#     """
-#     try:
-#         payload = request.get_json()
-#         realtors = payload["realtors"]
-#         buyer_name = payload["buyer_name"]
-#     except Exception as ex:
-#         logging.error(f"{round_robin.__name__} -- !!! UNEXPECTED ERROR - {ex}")
-#         return jsonify(
-#             {
-#                 "status": "fail", 
-#                 "error": "Invalid Payload received",
-#                 "message": "Correct Payload format -> {'realtors': "
-#                 "['realtor1@mail.com', 'realtor1@mail.com'], 'buyer_name': 'John'}"
-#             }
-#             ), 422
-
-#     logging.info(f"{round_robin.__name__} -- RAW PAYLOAD -- {payload}")
-#     return jsonify({"assigned_realtor": get_realtor_to_assign(realtors, buyer_name)}), 200
-
-
 app = WSGIMiddleware(app)
 
 
