@@ -142,12 +142,11 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
         buyer_nationality = get_nationality(buyer_name, [list(nation.values())[0] for nation in realtors_nationalities if list(nation.values())[0]])
         logging.info(f"{get_realtor_to_assign.__name__} -- BUYER NATIONALITY - {buyer_nationality}")
 
-        detailed_info["realtor_nationality"] = list(realtors_nationalities[0].values())[0]
-
         national_realtors = [list(realtor.keys())[0] for realtor in realtors_nationalities if list(realtor.values())[0] == buyer_nationality]
         logging.info(f"{get_realtor_to_assign.__name__} -- REALTORS BY NATIONALITY EVALUATION - {national_realtors}")
 
         if len(national_realtors) == 1:
+            detailed_info["realtor_nationality"] = list(realtors_nationalities[0].values())[0]
             detailed_info["win_type"] = "nationality"
 
             return national_realtors[0], detailed_info
