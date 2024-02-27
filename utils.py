@@ -179,7 +179,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
 def get_pond_id(lead_province: str):
     logging.info(f"{get_pond_id.__name__} -- EVALUATING POND ID -- {lead_province}")
 
-    pond_id = 3
+    pond_id = 31
 
     if lead_province:
 
@@ -204,7 +204,7 @@ def get_pond_id(lead_province: str):
 
         if type(data) == dict and data.get("ponds"):
             for pond in data.get("ponds"):
-                if f"{lead_province.title()} (Out of Polygon)" == pond["name"]:  
+                if f"{lead_province.title()} (3 - Out of Polygon)" == pond["name"]:  
                     pond_id = pond["id"]
                     break
         logging.info(f"{get_pond_id.__name__} -- POND ID -- {pond_id}")
