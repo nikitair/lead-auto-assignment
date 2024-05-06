@@ -90,7 +90,7 @@ def mysql_connector(func):
 @mysql_connector
 def mysql_demo_query(connector):
     curr = connector.cursor()
-    curr.execute("SELECT * FROM tbl_customers LIMIT 1")
+    curr.execute("SELECT * FROM tbl_customers LIMIT 10 ORDER BY id DESC")
     data = curr.fetchall()
     curr.close()
     logging.info(data)
