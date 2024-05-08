@@ -8,3 +8,4 @@ tbl_market_leader_postal_codes.json
 sandbox.py
 ssh_demo.py
 sandbox*
+.DS_Store
