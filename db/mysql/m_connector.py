@@ -1,6 +1,6 @@
 import os
 
-import mysql.connector
+# import mysql.connector
 import pymysql
 # import logging
 from dotenv import load_dotenv
@@ -35,6 +35,7 @@ def mysql_connector(func):
     def inner(*args, **kwargs):
         logging.debug(f"CONNECTING TO MYSQL WITH SSH MODE - {SSH_MODE}")
         if SSH_MODE == 1:
+            print("TUNNEL")
 
             # SSH tunnel setup
             tunnel = SSHTunnelForwarder(
@@ -69,7 +70,7 @@ def mysql_connector(func):
                 logging.debug("MYSQL DISCONNECTED")
 
         else:
-            connection = mysql.connector.connect(
+            connection = pymysql.connect(
                 host=MYSQL_HOST,
                 user=MYSQL_USER,
                 password=MYSQL_PASSWORD,
@@ -90,7 +91,7 @@ def mysql_connector(func):
 @mysql_connector
 def mysql_demo_query(connector):
     curr = connector.cursor()
-    curr.execute("SELECT * FROM tbl_customers LIMIT 10 ORDER BY id DESC")
+    curr.execute("SELECT * FROM tbl_customers ORDER BY id DESC LIMIT 10")
     data = curr.fetchall()
     curr.close()
     logging.info(data)
