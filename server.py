@@ -166,7 +166,7 @@ def lead_auto_assignment():
     return jsonify(result), 200
 
 
-app = WSGIMiddleware(app)
+# app = WSGIMiddleware(app)
 
 
 if __name__ == '__main__':
