@@ -179,7 +179,7 @@ def get_realtor_to_assign(realtors: list, buyer_name: str,
 def get_pond_id(lead_province: str):
     logging.info(f"{get_pond_id.__name__} -- EVALUATING POND ID -- {lead_province}")
 
-    pond_id = 31
+    pond_id = 23
 
     if lead_province:
 
