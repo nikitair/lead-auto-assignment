@@ -1,7 +1,7 @@
 import json
 import re
 
-from logging_config import logger as logging
+from .logging_config import logger as logging
 
 from .m_connector import mysql_connector
 
